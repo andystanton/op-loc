@@ -36,8 +36,8 @@ class RunLoop extends Actor {
   }
 }
 
-object Optimumlocum extends App {
+/*object Optimumlocum extends App {
 
   akka.Main.main(Array("otos.RunLoop"))
 
-}
+}*/
