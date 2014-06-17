@@ -4,12 +4,14 @@ import org.scalatra.sbt._
 import org.scalatra.sbt.PluginKeys._
 import com.mojolly.scalate.ScalatePlugin._
 import ScalateKeys._
+import sbtassembly.Plugin._
+import AssemblyKeys._
 
 object Build extends sbt.Build {
   lazy val project = Project(
     id = "optimum-locum",
     base = file("."),
-    settings = Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
+    settings = Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ assemblySettings ++ Seq(
       name                  := "optimum-locum",
       organization          := "otos",
       version               := "0.1.0-SNAPSHOT",
@@ -45,7 +47,7 @@ object Build extends sbt.Build {
       "org.scalatra" %% "scalatra-scalate" % Versions.scalatra,
       "org.scalatra" %% "scalatra-specs2" % Versions.scalatra % "test",
       "ch.qos.logback" % "logback-classic" % "1.0.6" % "runtime",
-      "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container",
+      "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container;compile",
       "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
     )
 
