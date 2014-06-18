@@ -1,4 +1,4 @@
-# Optimum Locum
+# Optimum Locum [![Build Status](https://travis-ci.org/andystanton/op-loc.svg?branch=master)](https://travis-ci.org/andystanton/op-loc)
 
 API for evaluating the suitability of candidate locations based on configurable variables.
 
