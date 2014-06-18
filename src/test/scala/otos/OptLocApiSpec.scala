@@ -2,9 +2,11 @@ package otos
 
 import org.scalatra.test.scalatest._
 import org.scalatest.FunSuiteLike
+import _root_.akka.actor.{ActorSystem, Props}
 
 class OptLocApiSpec extends ScalatraSuite with FunSuiteLike {
-  addServlet(classOf[OptLocApi], "/*")
+  implicit val system = ActorSystem()
+  addServlet(new OptLocApi, "/*")
 
   test("simple get") {
     get("/") {

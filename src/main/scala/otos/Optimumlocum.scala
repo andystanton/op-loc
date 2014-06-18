@@ -35,9 +35,3 @@ class RunLoop extends Actor {
     case _ =>
   }
 }
-
-/*object Optimumlocum extends App {
-
-  akka.Main.main(Array("otos.RunLoop"))
-
-}*/

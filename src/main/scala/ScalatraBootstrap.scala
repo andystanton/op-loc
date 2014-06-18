@@ -4,7 +4,7 @@ import javax.servlet.ServletContext
 import _root_.akka.actor.{ActorSystem, Props}
 
 class ScalatraBootstrap extends LifeCycle {
-  val system = ActorSystem()
+  implicit val system = ActorSystem()
   val myActor = system.actorOf(Props[RunLoop])
 
   override def init(context: ServletContext) {
