@@ -11,7 +11,7 @@ class OptLocApiSpec extends ScalatraSuite with FunSuiteLike {
   test("simple get") {
     get("/") {
       status should equal (200)
-      body should include ("Optimum Locum")
+      body should include ("hello world")
     }
   }
 }

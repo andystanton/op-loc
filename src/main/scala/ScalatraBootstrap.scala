@@ -5,7 +5,6 @@ import _root_.akka.actor.{ActorSystem, Props}
 
 class ScalatraBootstrap extends LifeCycle {
   implicit val system = ActorSystem()
-  val myActor = system.actorOf(Props[RunLoop])
 
   override def init(context: ServletContext) {
     context.mount(new OptLocApi, "/*")
