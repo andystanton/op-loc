@@ -1,4 +1,4 @@
-# Optimum Locum [![Build Status](https://travis-ci.org/andystanton/op-loc.svg?branch=master)](https://travis-ci.org/andystanton/op-loc)
+# Optimum Locum [![Build Status](https://travis-ci.org/andystanton/opt-loc.svg?branch=master)](https://travis-ci.org/andystanton/opt-loc)
 
 API for evaluating the suitability of candidate locations based on configurable variables.
 
@@ -10,10 +10,9 @@ API for evaluating the suitability of candidate locations based on configurable 
 ## Quick Start
 
 ```
-git clone https://github.com/andystanton/op-loc.git && cd op-loc
+git clone https://github.com/andystanton/opt-loc.git && cd opt-loc
 sbt clean assembly
 find . -name *.jar | xargs java -jar
 ```
 
 An example Scalatra servlet will now be available at http://localhost:8080 and an example Akka job will be ticking over in the background.
-
