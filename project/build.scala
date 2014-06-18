@@ -15,7 +15,7 @@ object Build extends sbt.Build {
       name                  := "optimum-locum",
       organization          := "otos",
       version               := "0.1.0-SNAPSHOT",
-      scalaVersion          := "2.11.1",
+
       scalacOptions         := Seq("-deprecation", "-feature", "-encoding", "utf8"),
       resolvers             += Classpaths.typesafeReleases,
       libraryDependencies   ++= Dependencies(),
@@ -38,21 +38,23 @@ object Build extends sbt.Build {
 
     object Versions {
       val akka = "2.3.3"
-      val scalatra = "2.3.0"
+      val scalatra = "2.2.2"
     }
 
     val compileDependencies = Seq(
       "com.typesafe.akka" %% "akka-actor" % Versions.akka,
       "org.scalatra" %% "scalatra" % Versions.scalatra,
       "org.scalatra" %% "scalatra-scalate" % Versions.scalatra,
-      "org.scalatra" %% "scalatra-specs2" % Versions.scalatra % "test",
       "ch.qos.logback" % "logback-classic" % "1.0.6" % "runtime",
       "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container;compile",
-      "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
+      "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container;provided" artifacts (Artifact("javax.servlet", "jar", "jar"))
     )
 
     val testDependencies = Seq(
-      "com.typesafe.akka" %% "akka-testkit" % Versions.akka % "test"
+      "org.scalatest" % "scalatest_2.10" % "2.0" % "test",
+      "org.scalatra" %% "scalatra-scalatest" % Versions.scalatra % "test",
+      "com.typesafe.akka" %% "akka-testkit" % Versions.akka % "test",
+      "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "test" artifacts (Artifact("javax.servlet", "jar", "jar"))
     )
 
     def apply(): Seq[ModuleID] = compileDependencies ++ testDependencies

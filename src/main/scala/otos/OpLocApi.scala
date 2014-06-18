@@ -3,7 +3,7 @@ package otos
 import org.scalatra._
 import scalate.ScalateSupport
 
-class MyScalatraServlet extends ScalatrabitStack {
+class OpLocApi extends ScalatrabitStack {
 
   get("/") {
     <html>
