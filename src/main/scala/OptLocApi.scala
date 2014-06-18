@@ -2,7 +2,7 @@ package otos
 
 import org.scalatra._
 
-class OpLocApi extends ScalatraServlet {
+class OptLocApi extends ScalatraServlet {
 
   get("/") {
     <html>

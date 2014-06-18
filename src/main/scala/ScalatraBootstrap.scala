@@ -8,7 +8,7 @@ class ScalatraBootstrap extends LifeCycle {
   val myActor = system.actorOf(Props[RunLoop])
 
   override def init(context: ServletContext) {
-    context.mount(new OpLocApi, "/*")
+    context.mount(new OptLocApi, "/*")
   }
 
   override def destroy(context:ServletContext) {

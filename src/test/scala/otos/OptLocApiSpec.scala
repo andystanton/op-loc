@@ -3,8 +3,8 @@ package otos
 import org.scalatra.test.scalatest._
 import org.scalatest.FunSuiteLike
 
-class OpLocApiSpec extends ScalatraSuite with FunSuiteLike {
-  addServlet(classOf[OpLocApi], "/*")
+class OptLocApiSpec extends ScalatraSuite with FunSuiteLike {
+  addServlet(classOf[OptLocApi], "/*")
 
   test("simple get") {
     get("/") {
