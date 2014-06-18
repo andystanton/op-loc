@@ -8,7 +8,6 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Success, Failure}
-import ExecutionContext.Implicits.global
 
 
 final case class Result(value: String)
