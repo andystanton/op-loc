@@ -3,35 +3,39 @@ package otos
 import akka.actor._
 import akka.util.Timeout
 import akka.pattern.ask
-import org.scalatra._
 import scala.concurrent._
+import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
+import scala.concurrent.Future
 import scala.language.postfixOps
 import scala.util.{Success, Failure}
+import org.scalatra.{Accepted, AsyncResult, FutureSupport, ScalatraServlet}
 
-
-final case class Result(value: String)
-
-class SomeActor extends Actor {
+class ResponseBuilder extends Actor {
     def receive = {
         case _ => {
-            sender ! Result("hello world. I'm an akka actor responding to your request through a scalatra servlet")
+            sender ! {
+                <response>
+                    hello world. I'm an akka actor responding to your
+                    request through a scalatra servlet
+                </response>
+            }
         }
     }
 }
 
-class OptLocApi()(implicit val system: ActorSystem) extends ScalatraServlet {
+class OptLocApi()(implicit val system: ActorSystem) extends ScalatraServlet with FutureSupport {
+
+  protected implicit def executor: ExecutionContext = system.dispatcher
+
+  val responseBuilder = system.actorOf(Props[ResponseBuilder])
 
   get("/") {
-    val someActor = system.actorOf(Props[SomeActor])
+    implicit val defaultTimeout = Timeout(10 seconds)
 
-    val future = someActor.ask()(5 seconds)
-
-    Await.result(future, 5 seconds) match {
-      case Result(response) => {
+    new AsyncResult {
         contentType = "application/xml"
-        <response>{response}</response>
-      }
+        val is = responseBuilder ? None
     }
   }
 

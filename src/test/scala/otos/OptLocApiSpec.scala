@@ -8,7 +8,7 @@ class OptLocApiSpec extends ScalatraSuite with FunSuiteLike {
   implicit val system = ActorSystem()
   addServlet(new OptLocApi, "/*")
 
-  test("simple get") {
+  test("the Optimum Locum API") {
     get("/") {
       status should equal (200)
       body should include ("hello world")
