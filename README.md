@@ -4,7 +4,7 @@ API for evaluating the suitability of candidate locations based on configurable 
 
 ## Requirements
 
-* Scala >= 2.11.0
+* Scala >= 2.11.1
 * sbt >= 0.13.5
 
 ## Quick Start
@@ -15,4 +15,4 @@ sbt clean assembly
 find . -name *.jar | xargs java -jar
 ```
 
-An example Scalatra servlet will now be available at http://localhost:8080 and an example Akka job will be ticking over in the background.
+An example endpoint will not be available through a Scalatra servlet running on http://localhost:8080 whose response is determined by an Akka actor.
