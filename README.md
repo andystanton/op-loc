@@ -15,4 +15,4 @@ sbt clean assembly
 find . -name *.jar | xargs java -jar
 ```
 
-An example endpoint will not be available through a Scalatra servlet running on http://localhost:8080 whose response is determined by an Akka actor.
+An example endpoint will now be available through a Spray route running on http://localhost:8080.
