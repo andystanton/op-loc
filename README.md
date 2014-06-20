@@ -17,7 +17,7 @@ sbt assembly
 find . -name *.jar | xargs java -jar
 ```
 
-An example endpoint will now be available through a Spray route running on (http://localhost:8080).
+An example endpoint will now be available through a Spray route running on [http://localhost:8080](http://localhost:8080).
 
 ### Docker
 
