@@ -2,12 +2,15 @@ import sbt._
 import Keys._
 import sbtassembly.Plugin._
 import AssemblyKeys._
+import spray.revolver.RevolverPlugin._
 
 object Build extends sbt.Build {
   lazy val project = Project(
     id = "optimum-locum",
     base = file("."),
-    settings = Defaults.defaultSettings ++ assemblySettings ++ Seq(
+    settings = Defaults.defaultSettings
+        ++ assemblySettings
+        ++ Seq(
       name                  := "optimum-locum",
       organization          := "otos",
       version               := "0.1.0-SNAPSHOT",
@@ -16,7 +19,9 @@ object Build extends sbt.Build {
       resolvers             ++= Seq(Classpaths.typesafeReleases, "spray repo" at "http://repo.spray.io/"),
       libraryDependencies   ++= Dependencies()
     )
-  ).settings(net.virtualvoid.sbt.graph.Plugin.graphSettings: _*)
+  )
+  .settings(net.virtualvoid.sbt.graph.Plugin.graphSettings: _*)
+  .settings(Revolver.settings: _*)
 
   object Dependencies {
 
