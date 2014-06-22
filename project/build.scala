@@ -17,7 +17,8 @@ object Build extends sbt.Build {
       scalaVersion          := "2.11.1",
       scalacOptions         := Seq("-deprecation", "-feature", "-encoding", "utf8"),
       resolvers             ++= Seq(Classpaths.typesafeReleases, "spray repo" at "http://repo.spray.io/"),
-      libraryDependencies   ++= Dependencies()
+      libraryDependencies   ++= Dependencies(),
+      jarName in assembly   := "opt-loc.jar"
     )
   )
   .settings(net.virtualvoid.sbt.graph.Plugin.graphSettings: _*)
@@ -28,14 +29,21 @@ object Build extends sbt.Build {
     object Versions {
       val akka = "2.3.3"
       val spray = "1.3.1-20140423"
+      val sprayJson = "1.2.6"
       val scalatest = "2.2.0"
       val logback = "1.0.6"
+      val json4s = "3.2.9"
     }
 
     val compileDependencies = Seq(
       "com.typesafe.akka" %% "akka-actor" % Versions.akka,
       "io.spray" %% "spray-can" % Versions.spray,
       "io.spray" %% "spray-routing" % Versions.spray,
+      "io.spray" %% "spray-http" % Versions.spray,
+      "io.spray" %% "spray-httpx" % Versions.spray,
+      "io.spray" %% "spray-client" % Versions.spray,
+      "io.spray" %%  "spray-json" % Versions.sprayJson,
+      "org.json4s" %% "json4s-native" % Versions.json4s,
       "ch.qos.logback" % "logback-classic" % Versions.logback % "runtime"
     )
 

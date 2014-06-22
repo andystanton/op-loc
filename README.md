@@ -14,7 +14,7 @@ API for evaluating the suitability of candidate locations based on configurable 
 ```
 git clone https://github.com/andystanton/opt-loc.git && cd opt-loc
 sbt assembly
-find . -name *.jar | xargs java -jar
+java -jar target/scala-2.11/opt-loc.jar
 ```
 
 An example endpoint will now be available through a Spray route running on [http://localhost:8080](http://localhost:8080).

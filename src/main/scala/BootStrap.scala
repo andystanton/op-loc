@@ -1,5 +1,5 @@
 import otos._
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorSystem, Props, ActorRef}
 import akka.io.IO
 import spray.can.Http
 import akka.pattern.ask
@@ -9,10 +9,12 @@ import scala.concurrent.duration._
 object BootStrap extends App {
 
   // we need an ActorSystem to host our application in
-  implicit val system = ActorSystem("on-spray-can")
+  implicit val system = ActorSystem("spray-can-actor-system")
+
+  val placesService = system.actorOf(Props[GooglePlacesService], "places-service")
 
   // create and start our service actor
-  val service = system.actorOf(Props[OptLocApiActor], "demo-service")
+  val service = system.actorOf(Props(classOf[OptLocApiActor], placesService), "opt-loc-api")
 
   implicit val timeout = Timeout(5.seconds)
   // start a new HTTP server on port 8080 with our service actor as the handler
