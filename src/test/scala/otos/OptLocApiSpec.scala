@@ -13,12 +13,12 @@ class OptLocApiSpec extends FunSpec with ScalatestRouteTest with OptLocApi with 
   describe("the Optimum Locum API") {
     describe("the /find endpoint") {
       it("responds with the lattitude and longitude of the search target") {
-        Get("/find/newbury") ~> optLocApiRoute ~> check {
+        Get("/find/newbury%2C%20uk") ~> optLocApiRoute ~> check {
           status shouldBe OK
           val responseJson = responseAs[JObject]
-          (responseJson \ "id").extract[String] shouldBe "newbury"
-          (responseJson \ "latlong" \ "latitude").extract[Double] shouldBe 12.34
-          (responseJson \ "latlong" \ "longitude").extract[Double] shouldBe 56.78
+          (responseJson \ "id").extract[String] shouldBe "Newbury, West Berkshire, UK"
+          (responseJson \ "latlong" \ "latitude").extract[Double] shouldBe 51.401409
+          (responseJson \ "latlong" \ "longitude").extract[Double] shouldBe -1.3231139
         }
       }
     }
