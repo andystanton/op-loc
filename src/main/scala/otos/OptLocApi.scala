@@ -1,19 +1,15 @@
 package otos
 
-import akka.actor.Actor
-import akka.actor.ActorRef
-import akka.actor.Props
-import akka.util.Timeout
+import akka.actor.{Actor, ActorRef}
 import akka.pattern.ask
-import spray.routing._
-import spray.http._
-import MediaTypes._
-import spray.httpx.Json4sSupport
+import akka.util.Timeout
 import org.json4s._
 import org.json4s.native.Serialization
-import spray.util._
-import scala.concurrent.duration._
+import spray.httpx.Json4sSupport
+import spray.routing._
+
 import scala.concurrent.Await
+import scala.concurrent.duration._
 import scala.language.postfixOps
 
 class OptLocApiActor(val placesService: ActorRef) extends Actor with OptLocApi {
@@ -22,7 +18,7 @@ class OptLocApiActor(val placesService: ActorRef) extends Actor with OptLocApi {
 }
 
 trait OptLocApi extends HttpService with Json4sSupport {
-  implicit def placesService: ActorRef;
+  implicit def placesService: ActorRef
   implicit val json4sFormats = Serialization.formats(NoTypeHints)
   implicit val timeout = Timeout(5 seconds)
 
