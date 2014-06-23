@@ -25,9 +25,7 @@ trait OptLocApi extends HttpService with Json4sSupport {
   val optLocApiRoute = pathPrefix("find" / """\w+""".r) { locationSearch =>
     get {
       complete {
-        val future = placesService ? locationSearch
-        val result = Await.result(future, timeout.duration).asInstanceOf[Location]
-        result
+        Await.result(placesService ? locationSearch, timeout.duration).asInstanceOf[Location]
       }
     }
   }
