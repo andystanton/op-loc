@@ -21,9 +21,7 @@ An example endpoint will now be available through a Spray route running on [http
 
 ### Docker
 
-A Dockerfile is available for creating a deployable Docker image. This requires Docker >= 1.0.0 to be running.
-
-If you're [running Docker through boot2docker with VirtualBox on OSX](https://docs.docker.com/installation/mac/) you need to modify the network configuration for boot2docker's NAT adapter and forward port host 8080 to guest 8080 for 127.0.0.1.
+A Dockerfile is available for creating a deployable Docker image. This requires Docker >= 1.0.0.
 
 ```
 git clone https://github.com/andystanton/opt-loc.git && cd opt-loc

@@ -19,7 +19,6 @@ class OptLocApiSpec extends FunSpec with ScalatestRouteTest with OptLocApi with 
           (responseJson \ "id").extract[String] shouldBe "newbury"
           (responseJson \ "latlong" \ "latitude").extract[Double] shouldBe 12.34
           (responseJson \ "latlong" \ "longitude").extract[Double] shouldBe 56.78
-          true
         }
       }
     }
