@@ -11,7 +11,8 @@ object Build extends sbt.Build {
     base      = file("."),
     settings  = Defaults.coreDefaultSettings ++ assemblySettings ++ graphSettings ++ revolverSettings ++ Seq(
       libraryDependencies   ++= Dependencies(),
-      jarName in assembly   := "opt-loc.jar"
+      jarName in assembly   := "opt-loc.jar",
+      parallelExecution in Test := false
     )
   )
 
@@ -41,7 +42,8 @@ object Build extends sbt.Build {
     val testDependencies = Seq(
       "org.scalatest"     %%  "scalatest"       % Versions.scalatest  % "test",
       "com.typesafe.akka" %%  "akka-testkit"    % Versions.akka       % "test",
-      "io.spray"          %%  "spray-testkit"   % Versions.spray      % "test"
+      "io.spray"          %%  "spray-testkit"   % Versions.spray      % "test",
+      "com.github.tomakehurst" % "wiremock" % "1.33" % "test"
     )
 
     def apply(): Seq[ModuleID] = compileDependencies ++ testDependencies

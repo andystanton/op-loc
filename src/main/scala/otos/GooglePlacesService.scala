@@ -13,7 +13,8 @@ case class Location(id: String, latlong: LatLong)
 
 class GooglePlacesService extends Actor {
   val config = ConfigFactory.load("opt-loc.properties")
-  val apiKey = config.getString("google.places.apikey")
+  val apiKey = config.getString("google.places.api.key")
+  val apiUrl = config.getString("google.places.api.url")
 
   def receive = {
     case locationSearch: String =>
@@ -25,7 +26,8 @@ class GooglePlacesService extends Actor {
 
   def queryPlacesApi(searchKey: String): Future[HttpResponse] = {
     val pipeline: HttpRequest => Future[HttpResponse] = sendReceive
-    pipeline(Get(s"https://maps.googleapis.com/maps/api/place/textsearch/json?key=$apiKey&query=$searchKey&sensor=false"))
+    println("places api url: " + apiUrl.replace("$apiKey", apiKey).replace("$searchKey", searchKey))
+    pipeline(Get(apiUrl.replace("$apiKey", apiKey).replace("$searchKey", searchKey)))
   }
 
   def jsonToLocation(placesJson: String): Location = {
