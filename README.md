@@ -21,7 +21,7 @@ An example endpoint will now be available through a Spray route running on [http
 
 ### Docker
 
-A Dockerfile is available for creating a deployable Docker image. This requires Docker >= 1.0.0 to be running.
+A Dockerfile is available for creating a deployable Docker image. This requires Docker >= 1.0.0.
 
 ```
 git clone https://github.com/andystanton/opt-loc.git && cd opt-loc
