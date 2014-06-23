@@ -4,8 +4,8 @@ FROM    ubuntu:14.04
 
 RUN     apt-get -y install openjdk-7-jre
 
-ADD     ./target/scala-2.11/optimum-locum-assembly-0.1.0-SNAPSHOT.jar opt-loc.jar
+ADD     ./target/scala-2.11/opt-loc.jar opt-loc.jar
 
 EXPOSE  8080
 
-CMD ["java", "-jar", "opt-loc.jar"]
+CMD     ["java", "-jar", "opt-loc.jar"]
