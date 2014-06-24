@@ -26,7 +26,6 @@ class GooglePlacesService extends Actor {
 
   def queryPlacesApi(searchKey: String): Future[HttpResponse] = {
     val pipeline: HttpRequest => Future[HttpResponse] = sendReceive
-    println("places api url: " + apiUrl.replace("$apiKey", apiKey).replace("$searchKey", searchKey))
     pipeline(Get(apiUrl.replace("$apiKey", apiKey).replace("$searchKey", searchKey)))
   }
 
