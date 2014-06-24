@@ -1,2 +1,2 @@
-google.places.api.key=YOUR-GOOGLE-PLACES-API-KEY-HERE
+google.places.api.key=YOUR-GOOGLE-PLACES-API-KEY
 google.places.api.url=https://maps.googleapis.com/maps/api/place/textsearch/json?key=$apiKey&query=$searchKey&sensor=false
