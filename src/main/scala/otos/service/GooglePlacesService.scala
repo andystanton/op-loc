@@ -1,6 +1,6 @@
-package otos
+package otos.service
 
-import akka.actor.Actor
+import akka.actor._
 import com.typesafe.config.ConfigFactory
 import spray.client.pipelining._
 import spray.http._
@@ -11,10 +11,12 @@ import scala.concurrent.Future
 case class LatLong(latitude: Double, longitude: Double)
 case class Location(id: String, latlong: LatLong)
 
-class GooglePlacesService extends Actor {
+class GooglePlacesServiceActor extends Actor with GooglePlacesService {
   val config = ConfigFactory.load("opt-loc.properties")
-  val apiKey = config.getString("google.places.api.key")
-  val apiUrl = config.getString("google.places.api.url")
+
+  implicit val system = context.system
+  implicit val apiKey = config.getString("google.places.api.key")
+  implicit val apiUrl = config.getString("google.places.api.url")
 
   def receive = {
     case locationSearch: String =>
@@ -23,6 +25,12 @@ class GooglePlacesService extends Actor {
         requestSender ! jsonToLocation(response.entity.asString)
       }
   }
+}
+
+trait GooglePlacesService {
+  implicit def system: ActorSystem
+  implicit def apiKey: String
+  implicit def apiUrl: String
 
   def queryPlacesApi(searchKey: String): Future[HttpResponse] = {
     val pipeline: HttpRequest => Future[HttpResponse] = sendReceive
@@ -43,6 +51,6 @@ class GooglePlacesService extends Actor {
       JField("lng", JDouble(longitude)) <- location
     } yield Location(address, LatLong(latitude, longitude))
 
-    locations(0)
+    locations.head
   }
 }
