@@ -16,7 +16,6 @@ class GooglePlacesServiceActorStub extends GooglePlacesServiceActor {
 
 class OptLocApiSpec extends FunSpec with ScalatestRouteTest with OptLocApi with FixtureLoading with Matchers {
   def actorRefFactory = system
-
   val placesServiceActor = TestActorRef[GooglePlacesServiceActorStub]
 
   describe("the Optimum Locum API") {

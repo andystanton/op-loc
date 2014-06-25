@@ -17,7 +17,7 @@ sbt assembly
 java -jar target/scala-2.11/opt-loc.jar
 ```
 
-An example endpoint will now be available through a Spray route running on [http://localhost:8080](http://localhost:8080).
+An example endpoint will now be available through a Spray route running on [http://localhost:8080/find/location](http://localhost:8080/find/location).
 
 ### Docker
 

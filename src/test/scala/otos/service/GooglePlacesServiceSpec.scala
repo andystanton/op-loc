@@ -23,6 +23,13 @@ class GooglePlacesServiceSpec extends TestKit(ActorSystem("GooglePlacesServiceSp
   override def beforeEach() {
     wireMockServer.start()
     WireMock.configureFor(host, port)
+
+    stubFor(WireMock.get(urlEqualTo("/places")).willReturn(
+      aResponse()
+        .withStatus(200)
+        .withHeader("Content-Type", "application/json")
+        .withBody(loadFixture("/fixtures/google-places-newbury.json").orNull)
+    ))
   }
 
   override def afterEach() {
@@ -31,25 +38,25 @@ class GooglePlacesServiceSpec extends TestKit(ActorSystem("GooglePlacesServiceSp
 
   describe("the Google Places Service Actor") {
     it("responds with a location") {
-//      import akka.pattern.ask
-//      val location = Await.result(placesServiceActor ? "newbury,uk", timeout.duration).asInstanceOf[Location]
-//
-//      location.id shouldBe "Newbury, West Berkshire, UK"
-//      location.latlong shouldBe LatLong(51.401409, -1.3231139)
+      import akka.pattern.ask
+      val location = Await.result(placesServiceActor ? "newbury,uk", timeout.duration).asInstanceOf[Location]
+
+      location.id shouldBe "Newbury, West Berkshire, UK"
+      location.latlong shouldBe LatLong(51.401409, -1.3231139)
     }
   }
 
   describe("the Google Places Service") {
     it("responds with the latitude and longitude of the search target") {
-      stubFor(WireMock.get(urlEqualTo("/places")).willReturn(
-        aResponse()
-          .withStatus(200)
-          .withHeader("Content-Type", "application/json")
-          .withBody(loadFixture("/fixtures/google-places-newbury.json").orNull)
-      ))
+      val pService = new GooglePlacesService {
+        override implicit def apiKey: String = "0123456789"
+        override implicit def apiUrl: String = "http://localhost:9374/places"
+        override implicit def system: ActorSystem = actorRefFactory
+      }
 
-      import akka.pattern.ask
-      val location = Await.result(placesServiceActor ? "newbury,uk", timeout.duration).asInstanceOf[Location]
+      val locationResponse = Await.result(pService.queryPlacesApi("newbury,uk"), timeout.duration)
+      val locationJson = locationResponse.entity.asString
+      val location: Location = pService.jsonToLocation(locationJson)
 
       location.id shouldBe "Newbury, West Berkshire, UK"
       location.latlong shouldBe LatLong(51.401409, -1.3231139)
