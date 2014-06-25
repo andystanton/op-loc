@@ -17,5 +17,5 @@ object Boot extends App {
   val placesService = system.actorOf(Props[GooglePlacesServiceActor], "google-places-service")
   val service = system.actorOf(Props(classOf[OptLocApiActor], placesService), "opt-loc-api")
 
-  IO(Http) ? Http.Bind(service, interface = "localhost", port = 8080)
+  IO(Http) ? Http.Bind(service, interface = "0.0.0.0", port = 8080)
 }
