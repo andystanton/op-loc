@@ -1,13 +1,14 @@
-package otos
+package otos.api
 
 import akka.testkit.TestActorRef
 import org.json4s._
 import org.scalatest._
+import otos.service.{GooglePlacesServiceActor, LatLong, Location}
 import otos.util.FixtureLoading
 import spray.http.StatusCodes._
 import spray.testkit.ScalatestRouteTest
 
-class GooglePlacesServiceStub extends GooglePlacesService {
+class GooglePlacesServiceActorStub extends GooglePlacesServiceActor {
   override def receive = {
     case _ => sender ! Location("Newbury, West Berkshire, UK", LatLong(51.401409, -1.3231139))
   }
@@ -16,7 +17,7 @@ class GooglePlacesServiceStub extends GooglePlacesService {
 class OptLocApiSpec extends FunSpec with ScalatestRouteTest with OptLocApi with FixtureLoading with Matchers {
   def actorRefFactory = system
 
-  val placesService = TestActorRef[GooglePlacesServiceStub]
+  val placesServiceActor = TestActorRef[GooglePlacesServiceActorStub]
 
   describe("the Optimum Locum API") {
     describe("the /find endpoint") {
