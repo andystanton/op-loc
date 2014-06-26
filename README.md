@@ -43,8 +43,6 @@ Run using:
 java -jar target/scala-2.11/opt-loc.jar
 ```
 
-A location search endpoint will now be available on [http://localhost:8080/find/london](http://localhost:8080/find/london).
-
 ### Docker
 
 A Dockerfile is available for creating a deployable Docker image. This requires Docker >= 1.0.1.
