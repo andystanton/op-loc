@@ -9,23 +9,34 @@ API for evaluating the suitability of candidate locations based on configurable 
 
 ## Quick Start
 
+You will need a [Google Places API key](https://developers.google.com/places/documentation/index).
+
 ### Standalone
 
 ```
 git clone https://github.com/andystanton/opt-loc.git && cd opt-loc
+```
+
+You'll need to copy ```src/main/resources/opt-loc.properties.example``` to ```src/main/resources/opt-loc.properties``` and update the value of the property ```google.places.api.key``` to your Google Places API key.
+
+```
 sbt assembly
 java -jar target/scala-2.11/opt-loc.jar
 ```
 
-An example endpoint will now be available through a Spray route running on [http://localhost:8080/find/location](http://localhost:8080/find/location).
+A location search endpoint will now be available on [http://localhost:8080/find/london](http://localhost:8080/find/london).
 
 ### Docker
 
-A Dockerfile is available for creating a deployable Docker image. This requires Docker >= 1.0.0.
+A Dockerfile is available for creating a deployable Docker image. This requires Docker >= 1.0.1.
+
+Having built the standalone application above and verified you are able to run it, you will be able to build a Docker image as follows: 
 
 ```
-git clone https://github.com/andystanton/opt-loc.git && cd opt-loc
-sbt assembly
 docker build -t andystanton/opt-loc .
 docker run -d -p 8080:8080 andystanton/opt-loc
 ```
+
+## Features
+
+* Query Google Places API for a single location
