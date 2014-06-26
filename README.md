@@ -13,14 +13,23 @@ You will need a [Google Places API key](https://developers.google.com/places/doc
 
 ### Standalone
 
+Clone the project:
+
 ```
 git clone https://github.com/andystanton/opt-loc.git && cd opt-loc
 ```
 
-You'll need to copy ```src/main/resources/opt-loc.properties.example``` to ```src/main/resources/opt-loc.properties``` and update the value of the property ```google.places.api.key``` to your Google Places API key.
+Copy ```src/main/resources/opt-loc.properties.example``` to ```src/main/resources/opt-loc.properties``` and update the value of the property ```google.places.api.key``` to your Google Places API key.
+
+You can then use sbt to generate a standalone runnable jar using the assembly plugin:
 
 ```
 sbt assembly
+```
+
+Finally, try it out:
+
+```
 java -jar target/scala-2.11/opt-loc.jar
 ```
 
