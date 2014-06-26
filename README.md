@@ -21,27 +21,23 @@ Copy ```src/main/resources/opt-loc.properties.example``` to ```src/main/resource
 
 ### sbt
 
-Start sbt
-
-```
-sbt
-```
-
 From inside sbt, start up the server using the Revolver plugin re-start command (re-stop shuts it down):
 
 ```
 re-start
 ```
 
+A location search endpoint will now be available on [http://localhost:8080/find/london](http://localhost:8080/find/london).
+
 ### Standalone
 
-Alternatively, you can use sbt to generate a standalone runnable jar using the assembly plugin. From outside sbt:
+Alternatively, you can use sbt to generate a standalone runnable jar using the assembly plugin. From a terminal:
 
 ```
 sbt assembly
 ```
 
-Try it out:
+Run using:
 
 ```
 java -jar target/scala-2.11/opt-loc.jar
