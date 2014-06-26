@@ -11,8 +11,6 @@ API for evaluating the suitability of candidate locations based on configurable 
 
 You will need a [Google Places API key](https://developers.google.com/places/documentation/index).
 
-### Standalone
-
 Clone the project:
 
 ```
@@ -21,13 +19,29 @@ git clone https://github.com/andystanton/opt-loc.git && cd opt-loc
 
 Copy ```src/main/resources/opt-loc.properties.example``` to ```src/main/resources/opt-loc.properties``` and update the value of the property ```google.places.api.key``` to your Google Places API key.
 
-You can then use sbt to generate a standalone runnable jar using the assembly plugin:
+### sbt
+
+Start sbt
+
+```
+sbt
+```
+
+From inside sbt, start up the server using the Revolver plugin re-start command (re-stop shuts it down):
+
+```
+re-start
+```
+
+### Standalone
+
+Alternatively, you can use sbt to generate a standalone runnable jar using the assembly plugin. From outside sbt:
 
 ```
 sbt assembly
 ```
 
-Finally, try it out:
+Try it out:
 
 ```
 java -jar target/scala-2.11/opt-loc.jar
