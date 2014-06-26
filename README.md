@@ -31,7 +31,7 @@ A location search endpoint will now be available on [http://localhost:8080/find/
 
 ### Standalone
 
-Alternatively, you can use sbt to generate a standalone runnable jar using the assembly plugin. From a terminal:
+Alternatively, you can generate a standalone runnable jar using the assembly plugin. From a terminal:
 
 ```
 sbt assembly
@@ -51,6 +51,11 @@ Having built the standalone application above and verified you are able to run i
 
 ```
 docker build -t andystanton/opt-loc .
+```
+
+Run using:
+
+```
 docker run -d -p 8080:8080 andystanton/opt-loc
 ```
 
