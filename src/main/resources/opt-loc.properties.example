@@ -1,2 +1,5 @@
 google.places.api.key=YOUR-GOOGLE-PLACES-API-KEY
 google.places.api.url=https://maps.googleapis.com/maps/api/place/textsearch/json?key=$apiKey&query=$searchKey&sensor=false
+javax.persistence.jdbc.url=jdbc:postgresql://localhost:5432/opt-loc
+javax.persistence.jdbc.user=optloc
+javax.persistence.jdbc.password=optloc
