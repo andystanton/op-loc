@@ -41,6 +41,16 @@ import scala.concurrent.Await
           pgService.findLocation(locationSearch)
         }
       }
+    } ~
+    path("near" / """\w+""".r) { locationSearch =>
+      get {
+        parameters("range" ? "10000") { range =>
+          complete {
+            val pgService = new PostgresPlacesServices
+            pgService.findStuffNear(locationSearch, range.toInt)
+          }
+        }
+      }
     }
   }
 }

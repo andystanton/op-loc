@@ -8,9 +8,6 @@ import spray.http._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-case class LatLong(latitude: Double, longitude: Double)
-case class Location(id: String, latlong: LatLong)
-
 class GooglePlacesServiceActor extends Actor with GooglePlacesService {
   val config = ConfigFactory.load("opt-loc.properties")
 

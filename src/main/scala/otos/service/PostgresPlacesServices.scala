@@ -36,8 +36,20 @@ class PostgresPlacesServices {
     Location(resultSet.getString("name"), LatLong(resultSet.getDouble("latitude"), resultSet.getDouble("longitude")))
   }
 
-  def doThing = {
-    val query = "SELECT name FROM places_gb WHERE ST_Distance_Sphere(geom, ST_MakePoint(-1.3231139, 51.401409)) <= 10000"
+  def findStuffNear(locationSearch: String, locationDistance: Int) = {
+    val location = findLocation(locationSearch)
+    val query =
+      s"""|SELECT
+          |  name
+          |FROM
+          |  places_gb
+          |WHERE
+          |  name != '$locationSearch'
+          |  AND feature_class='P'
+          |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.latlong.latitude}, ${location.latlong.longitude})) <= $locationDistance
+          |ORDER BY
+          |  name ASC
+          |""".stripMargin
     val stmt = databaseConnection.prepareStatement(query)
     val resultSet = stmt.executeQuery()
     Iterator.continually(resultSet.next).takeWhile(_ == true).map{
