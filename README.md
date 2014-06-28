@@ -6,56 +6,42 @@ API for evaluating the suitability of candidate locations based on configurable 
 
 * scala >= 2.11.1
 * sbt >= 0.13.5
+* postgresql >= 9.3
+* postgis >= 2.1.3
 
 ## Quick Start
 
-You will need a [Google Places API key](https://developers.google.com/places/documentation/index).
-
-Clone the project:
+You will need to have postgresql installed and running with postgis support. Clone the project and initialise the database:
 
 ```
-git clone https://github.com/andystanton/opt-loc.git && cd opt-loc
+git clone https://github.com/andystanton/opt-loc.git
+cd opt-loc/database
+./setup.sh
+cp src/main/resources/opt-loc.properties.example src/main/resources/opt-loc.properties
 ```
 
-Copy ```src/main/resources/opt-loc.properties.example``` to ```src/main/resources/opt-loc.properties``` and update the value of the property ```google.places.api.key``` to your Google Places API key.
+If your postgres database runs on anything other than ```localhost:5432```, update ```src/main/resources/opt-loc.properties``` with the correct hostname and port.
 
 ### sbt
 
 From inside sbt, start up the server using the Revolver plugin re-start command (re-stop shuts it down):
 
 ```
-re-start
+~re-start
 ```
 
 A location search endpoint will now be available on [http://localhost:8080/find/london](http://localhost:8080/find/london).
 
-### Standalone
-
-Alternatively, you can generate a standalone runnable jar using the assembly plugin. From a terminal:
-
-```
-sbt assembly
-```
-
-Run using:
-
-```
-java -jar target/scala-2.11/opt-loc.jar
-```
 
 ### Docker
 
 A Dockerfile is available for creating a deployable Docker image. This requires Docker >= 1.0.1.
 
-Having built the standalone application above and verified you are able to run it, you will be able to build a Docker image as follows: 
+First generate a standalone runnable jar using the assembly plugin, then build and run the Docker image. From a terminal:
 
 ```
+sbt assembly
 docker build -t andystanton/opt-loc .
-```
-
-Run using:
-
-```
 docker run -d -p 8080:8080 andystanton/opt-loc
 ```
 
