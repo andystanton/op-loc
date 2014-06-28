@@ -18,11 +18,23 @@ class OptLocApiSpec extends FunSpec with ScalatestRouteTest with OptLocApi with 
   def actorRefFactory = system
   val placesServiceActor = TestActorRef[GooglePlacesServiceActorStub]
 
+
   describe("the Optimum Locum API") {
+    describe("the /ping endpoint") {
+      it("responds with an HTTP 200 code and a status response message") {
+        Get("/ping") ~> optLocApiRoute ~> check {
+          status shouldBe OK
+          val responseJson = responseAs[JObject]
+          (responseJson \ "code").extract[Int] shouldBe 200
+        }
+      }
+    }
+
     describe("the /find endpoint") {
       it("responds with the lattitude and longitude of the search target") {
         Get("/find/newbury") ~> optLocApiRoute ~> check {
           status shouldBe OK
+          println(response.entity.asString)
           val responseJson = responseAs[JObject]
           (responseJson \ "id").extract[String] shouldBe "Newbury, West Berkshire, UK"
           (responseJson \ "latlong" \ "latitude").extract[Double] shouldBe 51.401409
