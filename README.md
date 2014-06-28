@@ -24,38 +24,21 @@ Copy ```src/main/resources/opt-loc.properties.example``` to ```src/main/resource
 From inside sbt, start up the server using the Revolver plugin re-start command (re-stop shuts it down):
 
 ```
-re-start
+~re-start
 ```
 
 A location search endpoint will now be available on [http://localhost:8080/find/london](http://localhost:8080/find/london).
 
-### Standalone
-
-Alternatively, you can generate a standalone runnable jar using the assembly plugin. From a terminal:
-
-```
-sbt assembly
-```
-
-Run using:
-
-```
-java -jar target/scala-2.11/opt-loc.jar
-```
 
 ### Docker
 
 A Dockerfile is available for creating a deployable Docker image. This requires Docker >= 1.0.1.
 
-Having built the standalone application above and verified you are able to run it, you will be able to build a Docker image as follows: 
+First generate a standalone runnable jar using the assembly plugin, then build and run the Docker image. From a terminal:
 
 ```
+sbt assembly
 docker build -t andystanton/opt-loc .
-```
-
-Run using:
-
-```
 docker run -d -p 8080:8080 andystanton/opt-loc
 ```
 

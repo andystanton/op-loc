@@ -8,7 +8,7 @@ import spray.routing._
 
 class OptLocApiActor(val placesServiceActor: ActorRef) extends Actor with OptLocApi {
   def actorRefFactory = context
-  def receive = runRoute(anotherApiRoute)
+  def receive = runRoute(optLocApiRoute)
 }
 
 trait OptLocApi extends HttpService with Json4sSupport {
@@ -25,20 +25,21 @@ import scala.concurrent.Await
 
   implicit def placesServiceActor: ActorRef
 
-  val optLocApiRoute = pathPrefix("find" / """\w+""".r) { locationSearch =>
-    get {
-      complete {
-        import akka.pattern.ask
-        Await.result(placesServiceActor ? locationSearch, timeout.duration).asInstanceOf[Location]
+  val optLocApiRoute =  {
+    path("find" / """\w+""".r) { locationSearch =>
+      get {
+        complete {
+          import akka.pattern.ask
+          Await.result(placesServiceActor ? locationSearch, timeout.duration).asInstanceOf[Location]
+        }
       }
-    }
-  }
-
-  val anotherApiRoute = pathPrefix("pg") {
-    get {
-      complete {
-        val pgService = new PostgresPlacesServices
-        pgService.doThing
+    } ~
+    path("find2" / """\w+""".r) { locationSearch =>
+      get {
+        complete {
+          val pgService = new PostgresPlacesServices
+          pgService.findLocation(locationSearch)
+        }
       }
     }
   }
