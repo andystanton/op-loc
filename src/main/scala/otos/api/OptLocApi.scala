@@ -1,17 +1,18 @@
 package otos.api
 
 import akka.actor.{Actor, ActorRef}
-import otos.service.Location
-import otos.service.PostgresPlacesServices
+import otos.service.{Location, PostgresPlacesServices}
 import spray.httpx.Json4sSupport
 import spray.routing._
 
 class OptLocApiActor(val placesServiceActor: ActorRef) extends Actor with OptLocApi {
   def actorRefFactory = context
+
   def receive = runRoute(optLocApiRoute)
 }
 
 trait OptLocApi extends HttpService with Json4sSupport {
+
   import akka.util.Timeout
   import org.json4s._
   import org.json4s.native.Serialization
@@ -25,32 +26,39 @@ import scala.concurrent.Await
 
   implicit def placesServiceActor: ActorRef
 
-  val optLocApiRoute =  {
-    path("find" / """\w+""".r) { locationSearch =>
+  val optLocApiRoute = {
+    path("ping") {
       get {
         complete {
-          import akka.pattern.ask
-          Await.result(placesServiceActor ? locationSearch, timeout.duration).asInstanceOf[Location]
+          Map("code" -> 200)
         }
       }
     } ~
-    path("find2" / """\w+""".r) { locationSearch =>
-      get {
-        complete {
-          val pgService = new PostgresPlacesServices
-          pgService.findLocation(locationSearch)
+      path("find" / """\w+""".r) { locationSearch =>
+        get {
+          complete {
+            import akka.pattern.ask
+            Await.result(placesServiceActor ? locationSearch, timeout.duration).asInstanceOf[Location]
+          }
         }
-      }
-    } ~
-    path("near" / """\w+""".r) { locationSearch =>
-      get {
-        parameters("range" ? "10000") { range =>
+      } ~
+      path("find2" / """\w+""".r) { locationSearch =>
+        get {
           complete {
             val pgService = new PostgresPlacesServices
-            pgService.findStuffNear(locationSearch, range.toInt)
+            pgService.findLocation(locationSearch)
+          }
+        }
+      } ~
+      path("near" / """\w+""".r) { locationSearch =>
+        get {
+          parameters("range" ? "10000") { range =>
+            complete {
+              val pgService = new PostgresPlacesServices
+              pgService.findStuffNear(locationSearch, range.toInt)
+            }
           }
         }
       }
-    }
   }
 }
