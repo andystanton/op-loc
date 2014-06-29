@@ -1,7 +1,7 @@
 package otos.api
 
 import akka.actor.{Actor, ActorRef}
-import otos.service.{Location, PostgresPlacesServices}
+import otos.service.{Location, PostgresPlacesServiceThing}
 import spray.httpx.Json4sSupport
 import spray.routing._
 
@@ -45,7 +45,7 @@ import scala.concurrent.Await
       path("find2" / """\w+""".r) { locationSearch =>
         get {
           complete {
-            val pgService = new PostgresPlacesServices
+            val pgService = new PostgresPlacesServiceThing
             pgService.findLocation(locationSearch)
           }
         }
@@ -54,7 +54,7 @@ import scala.concurrent.Await
         get {
           parameters("range" ? "10000") { range =>
             complete {
-              val pgService = new PostgresPlacesServices
+              val pgService = new PostgresPlacesServiceThing
               pgService.findStuffNear(locationSearch, range.toInt)
             }
           }

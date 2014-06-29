@@ -20,7 +20,7 @@ cd opt-loc/database
 cp src/main/resources/opt-loc.properties.example src/main/resources/opt-loc.properties
 ```
 
-If your postgres database runs on anything other than ```localhost:5432```, update ```src/main/resources/opt-loc.properties``` with the correct hostname and port.
+If your postgres database runs on anything other than ```localhost:5432``` update ```src/main/resources/opt-loc.properties``` with the correct hostname and port.
 
 ### sbt
 
@@ -31,19 +31,6 @@ From inside sbt, start up the server using the Revolver plugin re-start command 
 ```
 
 A location search endpoint will now be available on [http://localhost:8080/find/london](http://localhost:8080/find/london).
-
-
-### Docker
-
-A Dockerfile is available for creating a deployable Docker image. This requires Docker >= 1.0.1.
-
-First generate a standalone runnable jar using the assembly plugin, then build and run the Docker image. From a terminal:
-
-```
-sbt assembly
-docker build -t andystanton/opt-loc .
-docker run -d -p 8080:8080 andystanton/opt-loc
-```
 
 ## Features
 

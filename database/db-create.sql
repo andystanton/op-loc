@@ -14,7 +14,8 @@ CREATE DATABASE "opt-loc"
        TABLESPACE = pg_default
        LC_COLLATE = 'en_GB.UTF-8'
        LC_CTYPE = 'en_GB.UTF-8'
-       CONNECTION LIMIT = -1;
+       CONNECTION LIMIT = -1
+       TEMPLATE template0;
 
 ALTER DATABASE "opt-loc"
   SET search_path = "$user", public, tiger;
