@@ -51,7 +51,8 @@ class GooglePlacesServiceSpec
       import akka.pattern.ask
       val location = Await.result(googlePlacesServiceActor ? "newbury,uk", timeout.duration).asInstanceOf[Location]
 
-      location.id shouldBe "Newbury, West Berkshire, UK"
+      location.id shouldBe -1
+      location.name shouldBe "Newbury, West Berkshire, UK"
       location.latlong shouldBe LatLong(51.401409, -1.3231139)
     }
   }
@@ -68,7 +69,8 @@ class GooglePlacesServiceSpec
       val locationJson = locationResponse.entity.asString
       val location: Location = pService.jsonToLocation(locationJson)
 
-      location.id shouldBe "Newbury, West Berkshire, UK"
+      location.id shouldBe -1
+      location.name shouldBe "Newbury, West Berkshire, UK"
       location.latlong shouldBe LatLong(51.401409, -1.3231139)
     }
   }

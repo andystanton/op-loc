@@ -46,7 +46,7 @@ trait GooglePlacesService {
       JField("location", JObject(location)) <- geometry
       JField("lat", JDouble(latitude)) <- location
       JField("lng", JDouble(longitude)) <- location
-    } yield Location(address, LatLong(latitude, longitude))
+    } yield Location(-1, address, LatLong(latitude, longitude))
 
     locations.head
   }

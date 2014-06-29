@@ -5,8 +5,9 @@ import java.sql.DriverManager
 import akka.actor.Actor
 import com.typesafe.config.ConfigFactory
 
-case class FindRequest(locationSearch: String)
-case class NearRequest(locationSearch: String, range: Int)
+case class IdRequest(id: Int)
+case class NameRequest(name: String)
+case class NearRequest(id: Int, range: Int)
 
 class PostgresPlacesServiceActor extends Actor with PostgresPlacesService {
   val config = ConfigFactory.load("opt-loc.properties")
@@ -16,10 +17,12 @@ class PostgresPlacesServiceActor extends Actor with PostgresPlacesService {
   implicit val jdbcPassword = config.getString("javax.persistence.jdbc.password")
 
   def receive = {
-    case FindRequest(locationSearch) =>
-      sender ! findLocation(locationSearch)
-    case NearRequest(locationSearch, range) =>
-      sender ! findNear(locationSearch, range)
+    case IdRequest(id) =>
+      sender ! findById(id)
+    case NameRequest(name) =>
+      sender ! findByName(name)
+    case NearRequest(id, range) =>
+      sender ! findNear(id, range)
   }
 }
 
@@ -32,7 +35,37 @@ trait PostgresPlacesService {
     DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPassword)
   }
 
-  def findLocation(locationSearch: String) = {
+  def findById(id: Int): Location = {
+    val query =
+      s"""|SELECT
+          |  name,
+          |  ST_X(geom) as latitude,
+          |  ST_Y(geom) as longitude
+          |FROM
+          |  places_gb
+          |WHERE
+          |  feature_class='P'
+          |  AND id=$id
+          |ORDER BY
+          |  population DESC;
+          |LIMIT 1
+          |""".stripMargin
+
+    val stmt = databaseConnection.prepareStatement(query)
+    val resultSet = stmt.executeQuery
+    resultSet.next
+
+    Location(
+      resultSet.getInt("id"),
+      resultSet.getString("name"),
+      LatLong(
+        resultSet.getDouble("latitude"),
+        resultSet.getDouble("longitude")
+      )
+    )
+  }
+
+  def findByName(locationSearch: String): List[Location] = {
     val query =
       s"""|SELECT
           |  name,
@@ -44,19 +77,26 @@ trait PostgresPlacesService {
           |  feature_class='P'
           |  AND name ILIKE '%$locationSearch%'
           |ORDER BY
-          |  population DESC
-          |LIMIT 1;
+          |  population DESC;
           |""".stripMargin
 
     val stmt = databaseConnection.prepareStatement(query)
     val resultSet = stmt.executeQuery
-    resultSet.next
 
-    Location(resultSet.getString("name"), LatLong(resultSet.getDouble("latitude"), resultSet.getDouble("longitude")))
+    Iterator.continually(resultSet.next).takeWhile(_ == true).map { _ =>
+      Location(
+        resultSet.getInt("id"),
+        resultSet.getString("name"),
+        LatLong(
+          resultSet.getDouble("latitude"),
+          resultSet.getDouble("longitude")
+        )
+      )
+    }.toList
   }
 
-  def findNear(locationSearch: String, locationDistance: Int) = {
-    val location = findLocation(locationSearch)
+  def findNear(id: Int, locationDistance: Int): List[Location] = {
+    val location = findById(id)
     val query =
       s"""|SELECT
           |  name,
@@ -65,7 +105,7 @@ trait PostgresPlacesService {
           |FROM
           |  places_gb
           |WHERE
-          |  name != '$locationSearch'
+          |  id != '$id'
           |  AND feature_class='P'
           |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.latlong.latitude}, ${location.latlong.longitude})) <= $locationDistance
           |ORDER BY
@@ -76,7 +116,14 @@ trait PostgresPlacesService {
     val resultSet = stmt.executeQuery
 
     Iterator.continually(resultSet.next).takeWhile(_ == true).map { _ =>
-        Location(resultSet.getString("name"), LatLong(resultSet.getDouble("latitude"), resultSet.getDouble("longitude")))
+        Location(
+          resultSet.getInt("id"),
+          resultSet.getString("name"),
+          LatLong(
+            resultSet.getDouble("latitude"),
+            resultSet.getDouble("longitude")
+          )
+        )
     }.toList
   }
 }

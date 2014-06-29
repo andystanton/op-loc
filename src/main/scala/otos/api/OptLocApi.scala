@@ -1,7 +1,7 @@
 package otos.api
 
 import akka.actor.{Actor, ActorRef}
-import otos.service.{NearRequest, FindRequest, Location}
+import otos.service.{IdRequest, NearRequest, NameRequest, Location}
 import spray.httpx.Json4sSupport
 import spray.routing._
 
@@ -41,18 +41,27 @@ trait OptLocApi extends HttpService with Json4sSupport {
         }
       }
     } ~
-    path("find" / """\w+""".r) { locationSearch =>
-      get {
-        complete {
-          Await.result(postgresPlacesServiceActor ? FindRequest(locationSearch), timeout.duration).asInstanceOf[Location]
-        }
-      }
-    } ~
-    path("near" / """\w+""".r) { locationSearch =>
-      get {
-        parameters("range" ? "10000") { range =>
+    pathPrefix("find") {
+      path("id" / """\d+""".r) { id =>
+        get {
           complete {
-            Await.result(postgresPlacesServiceActor ? NearRequest(locationSearch, range.toInt), timeout.duration).asInstanceOf[Seq[Location]]
+            Await.result(postgresPlacesServiceActor ? IdRequest(id.toInt), timeout.duration).asInstanceOf[Location]
+          }
+        }
+      } ~
+      path("name" / """\w+""".r) { name =>
+        get {
+          complete {
+            Await.result(postgresPlacesServiceActor ? NameRequest(name), timeout.duration).asInstanceOf[Seq[Location]]
+          }
+        }
+      } ~
+      path("near" / """\d+""".r) { id =>
+        get {
+          parameters("range" ? "10000") { range =>
+            complete {
+              Await.result(postgresPlacesServiceActor ? NearRequest(id.toInt, range.toInt), timeout.duration).asInstanceOf[Seq[Location]]
+            }
           }
         }
       }

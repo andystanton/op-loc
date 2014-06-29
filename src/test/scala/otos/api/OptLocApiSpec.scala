@@ -9,16 +9,19 @@ import spray.testkit.ScalatestRouteTest
 
 class GooglePlacesServiceActorStub extends GooglePlacesServiceActor {
   override def receive = {
-    case _ => sender ! Location("Newbury, West Berkshire, UK", LatLong(51.401409, -1.3231139))
+    case _ => sender ! Location(-1, "Newbury, West Berkshire, UK", LatLong(51.401409, -1.3231139))
   }
 }
 
 class PostgresPlacesServiceActorStub extends PostgresPlacesServiceActor {
   override def receive = {
-    case FindRequest(location) => sender ! Location("Newbury", LatLong(51.40033, -1.32059))
+    case IdRequest(location) => sender ! Location(1, "Newbury", LatLong(51.40033, -1.32059))
+    case NameRequest(location) => sender ! List(
+      Location(1, "Newbury", LatLong(51.40033, -1.32059))
+    )
     case NearRequest(location, range) => sender ! List(
-      Location("Thatcham", LatLong(51.40366, -1.26049)),
-      Location("Highclere", LatLong(51.3386, -1.37569))
+      Location(2, "Thatcham", LatLong(51.40366, -1.26049)),
+      Location(3, "Highclere", LatLong(51.3386, -1.37569))
     )
   }
 }
@@ -40,21 +43,32 @@ class OptLocApiSpec extends FunSpec with ScalatestRouteTest with OptLocApi with 
     }
 
     describe("the /find endpoint") {
-      it("responds with the latitude and longitude of the search target") {
-        Get("/find/newbury") ~> optLocApiRoute ~> check {
-          status shouldBe OK
-          responseAs[Location] shouldBe Location("Newbury", LatLong(51.40033, -1.32059))
+      describe("the /find/id endpoint") {
+        it("responds with location details of the location with the specified Id") {
+          Get("/find/id/1") ~> optLocApiRoute ~> check {
+            status shouldBe OK
+            responseAs[Location] shouldBe Location(1, "Newbury", LatLong(51.40033, -1.32059))
+          }
         }
       }
-    }
 
-    describe("the /near endpoint") {
-      it("responds with the location details of locations near the search target") {
-        Get("/near/newbury") ~> optLocApiRoute ~> check {
-          status shouldBe OK
-          val locations = responseAs[List[Location]]
-          locations should contain (Location("Thatcham", LatLong(51.40366, -1.26049)))
-          locations should contain (Location("Highclere", LatLong(51.3386, -1.37569)))
+      describe("the /find/name endpoint") {
+        it("responds with location details of locations matching the search target") {
+          Get("/find/name/newbury") ~> optLocApiRoute ~> check {
+            status shouldBe OK
+            responseAs[List[Location]] should contain (Location(1, "Newbury", LatLong(51.40033, -1.32059)))
+          }
+        }
+      }
+
+      describe("the /find/near endpoint") {
+        it("responds with the location details of locations near the search target") {
+          Get("/find/near/1") ~> optLocApiRoute ~> check {
+            status shouldBe OK
+            val locations = responseAs[List[Location]]
+            locations should contain (Location(2, "Thatcham", LatLong(51.40366, -1.26049)))
+            locations should contain (Location(3, "Highclere", LatLong(51.3386, -1.37569)))
+          }
         }
       }
     }
@@ -63,7 +77,7 @@ class OptLocApiSpec extends FunSpec with ScalatestRouteTest with OptLocApi with 
       it("responds with the latitude and longitude of the search target") {
         Get("/googleplaces/newbury") ~> optLocApiRoute ~> check {
           status shouldBe OK
-          responseAs[Location] shouldBe Location("Newbury, West Berkshire, UK", LatLong(51.401409, -1.3231139))
+          responseAs[Location] shouldBe Location(-1, "Newbury, West Berkshire, UK", LatLong(51.401409, -1.3231139))
         }
       }
     }
