@@ -11,12 +11,12 @@ class OptLocApiActor(val googlePlacesServiceActor: ActorRef, val postgresPlacesS
 }
 
 trait OptLocApi extends HttpService with Json4sSupport {
-
+  import akka.pattern.ask
   import akka.util.Timeout
   import org.json4s._
   import org.json4s.native.Serialization
 
-import scala.concurrent.Await
+  import scala.concurrent.Await
   import scala.concurrent.duration._
   import scala.language.postfixOps
 
@@ -37,7 +37,6 @@ import scala.concurrent.Await
     path("googleplaces" / """\w+""".r) { locationSearch =>
       get {
         complete {
-          import akka.pattern.ask
           Await.result(googlePlacesServiceActor ? locationSearch, timeout.duration).asInstanceOf[Location]
         }
       }
@@ -45,7 +44,6 @@ import scala.concurrent.Await
     path("find" / """\w+""".r) { locationSearch =>
       get {
         complete {
-          import akka.pattern.ask
           Await.result(postgresPlacesServiceActor ? FindRequest(locationSearch), timeout.duration).asInstanceOf[Location]
         }
       }
@@ -54,7 +52,6 @@ import scala.concurrent.Await
       get {
         parameters("range" ? "10000") { range =>
           complete {
-            import akka.pattern.ask
             Await.result(postgresPlacesServiceActor ? NearRequest(locationSearch, range.toInt), timeout.duration).asInstanceOf[Seq[Location]]
           }
         }
