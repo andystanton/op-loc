@@ -84,6 +84,7 @@ class PostgresPlacesServiceThing {
   val config = ConfigFactory.load("opt-loc.properties")
 
   lazy val databaseConnection = {
+    Class.forName("org.postgresql.Driver")
     val jdbcUrl = config.getString("javax.persistence.jdbc.url")
     val user = config.getString("javax.persistence.jdbc.user")
     val password = config.getString("javax.persistence.jdbc.password")

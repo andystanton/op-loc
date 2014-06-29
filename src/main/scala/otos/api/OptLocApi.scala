@@ -1,13 +1,12 @@
 package otos.api
 
 import akka.actor.{Actor, ActorRef}
-import otos.service.{Location, PostgresPlacesServiceThing}
+import otos.service.{NearRequest, FindRequest, Location}
 import spray.httpx.Json4sSupport
 import spray.routing._
 
-class OptLocApiActor(val placesServiceActor: ActorRef) extends Actor with OptLocApi {
+class OptLocApiActor(val googlePlacesServiceActor: ActorRef, val postgresPlacesServiceActor: ActorRef) extends Actor with OptLocApi {
   def actorRefFactory = context
-
   def receive = runRoute(optLocApiRoute)
 }
 
@@ -24,7 +23,8 @@ import scala.concurrent.Await
   implicit val json4sFormats = Serialization.formats(NoTypeHints)
   implicit val timeout = Timeout(10 seconds)
 
-  implicit def placesServiceActor: ActorRef
+  implicit def googlePlacesServiceActor: ActorRef
+  implicit def postgresPlacesServiceActor: ActorRef
 
   val optLocApiRoute = {
     path("ping") {
@@ -34,31 +34,31 @@ import scala.concurrent.Await
         }
       }
     } ~
-      path("find" / """\w+""".r) { locationSearch =>
-        get {
+    path("googleplaces" / """\w+""".r) { locationSearch =>
+      get {
+        complete {
+          import akka.pattern.ask
+          Await.result(googlePlacesServiceActor ? locationSearch, timeout.duration).asInstanceOf[Location]
+        }
+      }
+    } ~
+    path("find" / """\w+""".r) { locationSearch =>
+      get {
+        complete {
+          import akka.pattern.ask
+          Await.result(postgresPlacesServiceActor ? FindRequest(locationSearch), timeout.duration).asInstanceOf[Location]
+        }
+      }
+    } ~
+    path("near" / """\w+""".r) { locationSearch =>
+      get {
+        parameters("range" ? "10000") { range =>
           complete {
             import akka.pattern.ask
-            Await.result(placesServiceActor ? locationSearch, timeout.duration).asInstanceOf[Location]
-          }
-        }
-      } ~
-      path("find2" / """\w+""".r) { locationSearch =>
-        get {
-          complete {
-            val pgService = new PostgresPlacesServiceThing
-            pgService.findLocation(locationSearch)
-          }
-        }
-      } ~
-      path("near" / """\w+""".r) { locationSearch =>
-        get {
-          parameters("range" ? "10000") { range =>
-            complete {
-              val pgService = new PostgresPlacesServiceThing
-              pgService.findStuffNear(locationSearch, range.toInt)
-            }
+            Await.result(postgresPlacesServiceActor ? NearRequest(locationSearch, range.toInt), timeout.duration).asInstanceOf[Seq[Location]]
           }
         }
       }
+    }
   }
 }

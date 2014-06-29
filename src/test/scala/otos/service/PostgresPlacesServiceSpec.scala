@@ -1,13 +1,11 @@
 package otos.service
 
-import akka.actor.{Props, ActorSystem}
+import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestKit
-import org.scalatest.{BeforeAndAfterEach, Matchers, FunSpecLike}
-import otos.api.OptLocApi
+import org.scalatest.{BeforeAndAfterEach, FunSpecLike, Matchers}
 import otos.util.FixtureLoading
 
-class PostgresPlacesServiceSpec extends TestKit(ActorSystem("PostgresPlacesServiceSpec")) with FunSpecLike with OptLocApi with FixtureLoading with Matchers with BeforeAndAfterEach {
+class PostgresPlacesServiceSpec extends TestKit(ActorSystem("PostgresPlacesServiceSpec")) with FunSpecLike with FixtureLoading with Matchers with BeforeAndAfterEach {
   def actorRefFactory = system
-  val placesServiceActor = system.actorOf(Props[PostgresPlacesServiceActor], "postgres-places-service")
-
+  val postgresPlacesServiceActor = system.actorOf(Props[PostgresPlacesServiceActor], "postgres-places-service")
 }
