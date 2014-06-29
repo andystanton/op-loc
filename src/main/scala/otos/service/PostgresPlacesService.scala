@@ -38,6 +38,7 @@ trait PostgresPlacesService {
   def findById(id: Int): Location = {
     val query =
       s"""|SELECT
+          |  id,
           |  name,
           |  ST_X(geom) as latitude,
           |  ST_Y(geom) as longitude
@@ -47,8 +48,8 @@ trait PostgresPlacesService {
           |  feature_class='P'
           |  AND id=$id
           |ORDER BY
-          |  population DESC;
-          |LIMIT 1
+          |  population DESC
+          |LIMIT 1;
           |""".stripMargin
 
     val stmt = databaseConnection.prepareStatement(query)
@@ -68,6 +69,7 @@ trait PostgresPlacesService {
   def findByName(locationSearch: String): List[Location] = {
     val query =
       s"""|SELECT
+          |  id,
           |  name,
           |  ST_X(geom) as latitude,
           |  ST_Y(geom) as longitude
@@ -99,6 +101,7 @@ trait PostgresPlacesService {
     val location = findById(id)
     val query =
       s"""|SELECT
+          |  id,
           |  name,
           |  ST_X(geom) as latitude,
           |  ST_Y(geom) as longitude
