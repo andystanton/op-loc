@@ -14,7 +14,13 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class GooglePlacesServiceSpec extends TestKit(ActorSystem("GooglePlacesServiceSpec")) with FunSpecLike with FixtureLoading with Matchers with BeforeAndAfterEach {
+class GooglePlacesServiceSpec
+  extends TestKit(ActorSystem("GooglePlacesServiceSpec"))
+  with FunSpecLike
+  with FixtureLoading
+  with Matchers
+  with BeforeAndAfterEach {
+
   def actorRefFactory = system
   val googlePlacesServiceActor = system.actorOf(Props[GooglePlacesServiceActor], "google-places-service")
 
