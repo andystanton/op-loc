@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <title>Optimum Locum</title>
+    <style type="text/css">
+        @import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
+        body {
+            background-color: #e6e6e6;
+            font-size: 100%;
+            font-family: 'Lato', sans-serif;
+            font-weight: 400;
+        }
+
+        div, textarea, input {
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        form {
+            max-width: 100%;
+            display: block;
+        }
+        form input {
+            margin: 0 0 0.5em 0;
+            border: 1px solid #cccccc;
+            padding: 6px 10px;
+            color: #555555;
+            font-size: 1em;
+            width: 100%;
+        }
+    </style>
+</head>
+<body ng-controller="myController">
+    <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+    <script type="text/javascript">
+        var app = angular.module('myApp', []);
+
+        app.config(['$httpProvider', function($httpProvider) {
+            $httpProvider.defaults.useXDomain = true;
+            delete $httpProvider.defaults.headers.common['X-Requested-With'];
+        }])
+
+        app.service('LocationFinder', function($q, $http){
+            var API_URL = 'http://localhost:8080/find/name/';
+            this.findByName = function(name) {
+                var deferred = $q.defer();
+                if (name.length >= 3) {
+                    $http.get(API_URL + name).then(function(locations) {
+                        var _locations = {};
+                        var locations = locations.data;
+                        for(var i = 0, len = locations.length; i < len; i++) {
+                            _locations[locations[i].name] = "(" + locations[i].latlong.latitude + ", " + locations[i].latlong.longitude + ")";
+                        }
+                        deferred.resolve(_locations);
+                    }, function() {
+                        deferred.reject(arguments);
+                    });
+                } else {
+                    deferred.reject(arguments);
+                }
+                return deferred.promise;
+            }
+        })
+
+        app.controller('myController', function($scope, LocationFinder) {
+            $scope.selectedLocation = null;
+            $scope.locations = {};
+            $scope.findByName = function(name) {
+                LocationFinder.findByName(name).then(function(locations) {
+                    $scope.locations = locations;
+                });
+            }
+        })
+
+        app.directive('keyboardPoster', function($parse, $timeout){
+            var DELAY_TIME_BEFORE_POSTING = 0;
+            return function(scope, elem, attrs) {
+
+                var element = angular.element(elem)[0];
+                var currentTimeout = null;
+
+                element.oninput = function() {
+                    var model = $parse(attrs.postFunction);
+                    var poster = model(scope);
+
+                    if(currentTimeout) {
+                        $timeout.cancel(currentTimeout)
+                    }
+
+                    currentTimeout = $timeout(function() {
+                        poster(angular.element(element).val());
+                    }, DELAY_TIME_BEFORE_POSTING)
+                }
+            }
+        })
+    </script>
+    <form action="#">
+        <input type="text" 
+               keyboard-poster 
+               post-function="findByName" 
+               name="locationSearch"
+               placeholder="Start typing" 
+               list="_locations" 
+               style='margin-bottom: 100px'>
+        <datalist id="_locations">
+            <select style="display: none;"
+                    id="_select"
+                    name="_select"
+                    ng-model='selectedLocation'
+                    ng-options='k as v for (k,v) in locations'>
+            </select>
+        </datalist>
+    </form>
+</body>
+</html>

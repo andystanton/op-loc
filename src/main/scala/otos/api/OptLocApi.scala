@@ -49,21 +49,31 @@ trait OptLocApi extends HttpService with Json4sSupport {
           }
         }
       } ~
-      path("name" / """\w+""".r) { name =>
-        get {
-          complete {
-            Await.result(postgresPlacesServiceActor ? NameRequest(name), timeout.duration).asInstanceOf[Seq[Location]]
-          }
-        }
-      } ~
-      path("near" / """\d+""".r) { id =>
-        get {
-          parameters("range" ? 10, "minpop" ? 1000, "maxpop" ?).as(NearParams) { nearParams =>
+        path("name" / """\w+""".r) { name =>
+          get {
             complete {
-              Await.result(postgresPlacesServiceActor ? NearRequest(id.toInt, nearParams), timeout.duration).asInstanceOf[Seq[Location]]
+              Await.result(postgresPlacesServiceActor ? NameRequest(name), timeout.duration).asInstanceOf[Seq[Location]]
+            }
+          }
+        } ~
+        path("near" / """\d+""".r) { id =>
+          get {
+            parameters("range" ? 10, "minpop" ? 1000, "maxpop" ?).as(NearParams) { nearParams =>
+              complete {
+                Await.result(postgresPlacesServiceActor ? NearRequest(id.toInt, nearParams), timeout.duration).asInstanceOf[Seq[Location]]
+              }
             }
           }
         }
+    } ~
+    pathPrefix("") {
+      get {
+        getFromResourceDirectory("WEB-INF")
+      }
+    } ~
+    pathSingleSlash {
+      get {
+        getFromResource("WEB-INF/index.html")
       }
     }
   }
