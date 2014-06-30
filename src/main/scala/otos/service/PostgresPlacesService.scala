@@ -68,6 +68,7 @@ trait PostgresPlacesService {
   }
 
   def findByName(locationSearch: String): List[Location] = {
+    println(s"searching for: $locationSearch")
     val query =
       s"""|SELECT
           |  id,
@@ -78,7 +79,7 @@ trait PostgresPlacesService {
           |  places_gb
           |WHERE
           |  feature_class='P'
-          |  AND name ILIKE '%$locationSearch%'
+          |  AND name ILIKE '%${locationSearch.toLowerCase}%'
           |ORDER BY
           |  population DESC;
           |""".stripMargin

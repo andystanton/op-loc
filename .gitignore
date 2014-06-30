@@ -6,3 +6,4 @@
 /.idea
 /src/main/resources/opt-loc.properties
 /database/data
+/src/main/resources/WEB-INF/bower_components
