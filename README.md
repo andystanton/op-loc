@@ -4,10 +4,9 @@ API for evaluating the suitability of candidate locations based on configurable 
 
 ## Requirements
 
-* scala >= 2.11.1
 * sbt >= 0.13.5
-* postgresql >= 9.3
-* postgis >= 2.1.3
+* postgresql >= 9.3 + postgis >= 2.1
+* bower >= 1.3.5
 
 ## Quick Start
 
@@ -15,9 +14,17 @@ You will need to have postgresql installed and running with postgis support. Clo
 
 ```
 git clone https://github.com/andystanton/opt-loc.git
-cd opt-loc/database
-./setup.sh
-cp src/main/resources/opt-loc.properties.example src/main/resources/opt-loc.properties
+
+BASEDIR=$PWD/opt-loc
+
+$BASEDIR/database/setup.sh
+
+cd $BASEDIR/src/main/resources/WEB-INF
+bower update
+
+cp $BASEDIR/src/main/resources/opt-loc.properties.example $BASEDIR/src/main/resources/opt-loc.properties
+
+cd $BASEDIR
 ```
 
 If your postgres database runs on anything other than ```localhost:5432``` update ```src/main/resources/opt-loc.properties``` with the correct hostname and port.
