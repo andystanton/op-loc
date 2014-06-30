@@ -10,20 +10,21 @@ API for evaluating the suitability of candidate locations based on configurable 
 
 ## Quick Start
 
-You will need to have postgresql installed and running with postgis support. Clone the project and initialise the database:
+You will need to have postgres installed and running with postgis support. Clone the project and initialise the database:
 
 ```
-git clone https://github.com/andystanton/opt-loc.git
+BASEDIR=$PWD/opt-loc && git clone https://github.com/andystanton/opt-loc.git $BASEDIR
 
-BASEDIR=$PWD/opt-loc
-
+# setup database
 $BASEDIR/database/setup.sh
 
-cd $BASEDIR/src/main/resources/WEB-INF
-bower update
-
+# setup properties
 cp $BASEDIR/src/main/resources/opt-loc.properties.example $BASEDIR/src/main/resources/opt-loc.properties
 
+# setup front end
+cd $BASEDIR/src/main/resources/WEB-INF && bower update
+
+# go back to thr project root. we can launch sbt from here
 cd $BASEDIR
 ```
 
