@@ -1,0 +1,21 @@
+{
+  "name": "opt-loc",
+  "version": "0.1.0",
+  "homepage": "https://github.com/andystanton/opt-loc",
+  "authors": [
+    "Andy Stanton <andystanton@gmail.com>"
+  ],
+  "main": "index.html",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.18"
+  }
+}
