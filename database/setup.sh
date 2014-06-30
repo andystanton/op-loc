@@ -28,7 +28,7 @@ echo -e "=======================================================================
 
 echo -e "Downloading http://download.geonames.org/export/dump/GB.zip to data/GB.zip"
 
-curl -o "$SCRIPTPATH/data/GB.zip" http://download.geonames.org/export/dump/GB.zip --silent
+curl -o $SCRIPTPATH"/data/GB.zip" http://download.geonames.org/export/dump/GB.zip --silent
 
 echo -e "Extracting data/GB.zip to data/GB"
 
