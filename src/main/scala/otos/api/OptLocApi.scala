@@ -1,7 +1,7 @@
 package otos.api
 
 import akka.actor.{Actor, ActorRef}
-import otos.service.{IdRequest, NearRequest, NameRequest, Location}
+import otos.service._
 import spray.httpx.Json4sSupport
 import spray.routing._
 
@@ -58,9 +58,9 @@ trait OptLocApi extends HttpService with Json4sSupport {
       } ~
       path("near" / """\d+""".r) { id =>
         get {
-          parameters("range" ? "10000") { range =>
+          parameters("range" ? 10, "minpop" ? 1000, "maxpop" ?).as(NearParams) { nearParams =>
             complete {
-              Await.result(postgresPlacesServiceActor ? NearRequest(id.toInt, range.toInt), timeout.duration).asInstanceOf[Seq[Location]]
+              Await.result(postgresPlacesServiceActor ? NearRequest(id.toInt, nearParams), timeout.duration).asInstanceOf[Seq[Location]]
             }
           }
         }

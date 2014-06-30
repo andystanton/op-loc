@@ -7,7 +7,8 @@ import com.typesafe.config.ConfigFactory
 
 case class IdRequest(id: Int)
 case class NameRequest(name: String)
-case class NearRequest(id: Int, range: Int)
+case class NearRequest(id: Int, params: NearParams)
+case class NearParams(range: Int, minpop: Long, maxpop: Option[Long])
 
 class PostgresPlacesServiceActor extends Actor with PostgresPlacesService {
   val config = ConfigFactory.load("opt-loc.properties")
@@ -21,8 +22,8 @@ class PostgresPlacesServiceActor extends Actor with PostgresPlacesService {
       sender ! findById(id)
     case NameRequest(name) =>
       sender ! findByName(name)
-    case NearRequest(id, range) =>
-      sender ! findNear(id, range)
+    case NearRequest(id, NearParams(range, minPopulation, maxPopulation)) =>
+      sender ! findNear(id, range, minPopulation, maxPopulation)
   }
 }
 
@@ -97,7 +98,13 @@ trait PostgresPlacesService {
     }.toList
   }
 
-  def findNear(id: Int, locationDistance: Int): List[Location] = {
+  def findNear(
+    id: Int,
+    range: Int,
+    minPopulation: Long,
+    maxPopulation: Option[Long]
+  ) : List[Location] = {
+    val PopulationCeiling = 7000000000L
     val location = findById(id)
     val query =
       s"""|SELECT
@@ -110,10 +117,12 @@ trait PostgresPlacesService {
           |WHERE
           |  id != '$id'
           |  AND feature_class='P'
-          |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.latlong.latitude}, ${location.latlong.longitude})) <= $locationDistance
+          |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.latlong.latitude}, ${location.latlong.longitude})) <= ${range * 1000}
+          |  AND population BETWEEN $minPopulation AND ${maxPopulation.getOrElse(PopulationCeiling)}
           |ORDER BY
           |  name ASC
           |""".stripMargin
+    println(query)
 
     val stmt = databaseConnection.prepareStatement(query)
     val resultSet = stmt.executeQuery
