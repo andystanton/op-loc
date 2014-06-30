@@ -28,11 +28,12 @@ echo -e "=======================================================================
 
 echo -e "Downloading http://download.geonames.org/export/dump/GB.zip to data/GB.zip"
 
-curl -o $SCRIPTPATH"/data/GB.zip" http://download.geonames.org/export/dump/GB.zip --silent
+mkdir -p "$SCRIPTPATH/data/GB"
+
+curl -o "$SCRIPTPATH/data/GB.zip" http://download.geonames.org/export/dump/GB.zip --silent
 
 echo -e "Extracting data/GB.zip to data/GB"
 
-mkdir -p "$SCRIPTPATH/data/GB"
 unzip -o -q "$SCRIPTPATH/data/GB.zip" -d "$SCRIPTPATH/data/GB"
 
 echo -e "Importing raw GB places data"
