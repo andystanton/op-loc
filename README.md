@@ -30,8 +30,16 @@ From inside sbt, start up the server using the Revolver plugin re-start command 
 ~re-start
 ```
 
-A location search endpoint will now be available on [http://localhost:8080/find/london](http://localhost:8080/find/london).
+A location search will now be available on [http://localhost:8080](http://localhost:8080).
 
 ## Features
 
-* Query Google Places API for a single location
+### Application
+
+* Location search by name
+
+### API
+
+* Search for locations by name
+* Get location information by id
+* Search for locations in a radius around another location optionally filtered by population
