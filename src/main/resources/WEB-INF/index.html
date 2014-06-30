@@ -41,7 +41,7 @@
         }])
 
         app.service('LocationFinder', function($q, $http){
-            var API_URL = 'http://localhost:8080/find/name/';
+            var API_URL = '/find/name/';
             this.findByName = function(name) {
                 var deferred = $q.defer();
                 if (name.length >= 3) {

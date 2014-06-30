@@ -4,17 +4,17 @@
 #
 # DOCKER-VERSION 1.0.
 
-FROM    ubuntu:14.04
+FROM    ubuntu:12.04
 
 RUN     apt-get update -qq
 
 RUN     apt-get -y -q install wget curl python-software-properties software-properties-common
 
-RUN     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+RUN     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 RUN     echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main" >> /etc/apt/sources.list.d/postgresql.list
 
-RUN     add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+RUN     add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
 
 RUN     apt-get update -qq
 
@@ -40,4 +40,4 @@ USER    root
 
 EXPOSE  8080
 
-CMD     ['sh', '-c', '/etc/init.d/postgresql start && java -jar opt-loc.jar']
+CMD     /etc/init.d/postgresql start && java -jar opt-loc.jar
