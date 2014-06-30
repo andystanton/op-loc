@@ -12,7 +12,7 @@ API for evaluating the suitability of candidate locations based on configurable 
 
 You will need to have postgres installed and running with postgis support. Clone the project and initialise the database:
 
-```
+```sh
 BASEDIR=$PWD/opt-loc && git clone https://github.com/andystanton/opt-loc.git $BASEDIR
 
 # setup database
