@@ -36,7 +36,7 @@ A location search will now be available on [http://localhost:8080](http://localh
 
 ### Application
 
-* Location search by name
+* Search for locations by name
 
 ### API
 
