@@ -2,6 +2,7 @@
 <html ng-app="myApp">
 <head>
     <title>Optimum Locum</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <style type="text/css">
         @import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
         body {
@@ -21,7 +22,7 @@
             display: block;
         }
         form input {
-            margin: 0 0 0.5em 0;
+            margin: none;
             border: 1px solid #cccccc;
             padding: 6px 10px;
             color: #555555;
@@ -29,6 +30,26 @@
             width: 100%;
         }
     </style>
+    <style type="text/css">
+        html { height: 100% }
+        body { height: 100%; margin: 0; padding: 0 }
+        #map-canvas { height: 100% }
+    </style>
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAaXGkVaBCl0l_jmEDpY3m2bfriFmZ23js">
+    </script>
+    <script type="text/javascript">
+        var map;
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(51.40033, -1.32059),
+          zoom: 8
+        };
+        map = new google.maps.Map(document.getElementById("map-canvas"),
+            mapOptions);
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
 </head>
 <body ng-controller="myController">
     <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
@@ -94,14 +115,14 @@
             }
         })
     </script>
-    <form action="#">
+    <form action="#" onsubmit="lookat(); return false">
         <input type="text" 
                keyboard-poster 
                post-function="findByName" 
                name="locationSearch"
                placeholder="Start typing" 
-               list="_locations" 
-               style='margin-bottom: 100px'>
+               list="_locations"
+               id="locationInput"/>
         <datalist id="_locations">
             <select style="display: none;"
                     id="_select"
@@ -111,5 +132,37 @@
             </select>
         </datalist>
     </form>
+    <script type="text/javascript">
+        var marker;
+        function lookat() {
+            var title = document.getElementById('locationInput');
+            var selectbox = document.getElementById('_select');
+            for (var i=0; i<selectbox.options.length; i++) {
+                var selopt = selectbox.options[i];
+
+                if (selopt.value == title.value) {
+                    if (marker != undefined) marker.setMap(null);
+                    var coordText = selopt.text;
+                    coordText = coordText.substr(1, coordText.length-2);
+                    console.log(coordText);
+                    var coords = coordText.split(",");
+                    var lat = coords[0].trim();
+                    var lng = coords[1].trim();
+                    console.log("got coords: " + lat + ", " + lng);
+
+                     marker = new google.maps.Marker({
+                          position: new google.maps.LatLng(lat,lng),
+                          map: map,
+                          title: selopt.value
+                      });
+                }
+            }
+        }
+
+        document.getElementById('locationInput').addEventListener('input', function () {
+           console.log('changed');
+        });
+    </script>
+    <div id="map-canvas"/>
 </body>
 </html>
