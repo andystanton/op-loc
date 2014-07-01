@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="myApp">
+<html ng-app="optLocApp">
 <head>
     <title>Optimum Locum</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -36,7 +36,7 @@
         #map-canvas { height: 100% }
     </style>
     <script type="text/javascript"
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAaXGkVaBCl0l_jmEDpY3m2bfriFmZ23js">
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCj_COh9hiJN5-ajssA6Jo1T8bF_cNePtg">
     </script>
     <script type="text/javascript">
         var map;
@@ -54,7 +54,7 @@
 <body ng-controller="myController">
     <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
     <script type="text/javascript">
-        var app = angular.module('myApp', []);
+        var app = angular.module('optLocApp', []);
 
         app.config(['$httpProvider', function($httpProvider) {
             $httpProvider.defaults.useXDomain = true;
@@ -86,9 +86,15 @@
         app.controller('myController', function($scope, LocationFinder) {
             $scope.selectedLocation = null;
             $scope.locations = {};
+            $scope.activeLocation = null;
             $scope.findByName = function(name) {
                 LocationFinder.findByName(name).then(function(locations) {
                     $scope.locations = locations;
+                });
+            }
+            $scope.findById = function(id) {
+                LocationFinder.findById(id).then(function(location) {
+                    $scope.activeLocation = location;
                 });
             }
         })
@@ -155,6 +161,8 @@
                           map: map,
                           title: selopt.value
                       });
+                      map.panTo(new google.maps.LatLng(lat,lng));
+                      map.setZoom(8);
                 }
             }
         }
