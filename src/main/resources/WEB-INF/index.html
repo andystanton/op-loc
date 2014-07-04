@@ -2,134 +2,206 @@
 <html>
 <head>
     <title>Optimum Locum</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
 
-    <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css">
-    <style>
-        .ui-autocomplete-loading {
-            background: white url("images/loading_30x30.gif") right center no-repeat;
-        }
-        form {
-            max-width: 100%;
-            display: block;
-        }
-        form input {
-            margin: none;
-            border: 1px solid #cccccc;
-            padding: 6px 10px;
-            color: #555555;
-            font-size: 1em;
-            width: 100%;
-        }
-    </style>
-    <style type="text/css">
-        html { height: 100% }
-        body { height: 100%; margin: 0; padding: 0 }
-        #map-canvas { height: 100% }
-    </style>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCj_COh9hiJN5-ajssA6Jo1T8bF_cNePtg"></script>
-    <script type="text/javascript">
-        var map;
-        function initialize() {
-            var mapOptions = {
-                center: new google.maps.LatLng(51.51279, -0.09184),
-                zoom: 8
-            };
-            map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-        }
-        google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta charset="utf-8">
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key="></script>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
-    <script>
-        var marker;
-        var nearmarkers;
-        $(function() {
-            function split( val ) {
-                return val.split( /,\s*/ );
-            }
-
-            function extractLast( term ) {
-                return split( term ).pop();
-            }
-
-            $("#locations")
-            .bind( "keydown", function( event ) {
-                if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
-                    event.preventDefault();
-                }
-            })
-            .autocomplete({
-                selectFirst: true,
-                autoFocus: true,
-                source: function( request, response ) {
-                    $.getJSON( "/find/name/" + extractLast( request.term ), function (data) {
-                        response($.map(data, function (location) {
-                            return {
-                                "label": location.name,
-                                "value": location.id
-                            };
-                        }));
-                    })
-                },
-                search: function() {
-                    var term = extractLast( this.value );
-                    if ( term.length < 2 ) {
-                        return false;
-                    }
-                },
-                focus: function() {
-                    return false;
-                },
-                select: function( event, ui ) {
-                    $.getJSON("/find/id/" + ui.item.value, function (data) {
-                        if (marker != undefined) marker.setMap(null);
-                        var lat = data.latlong.latitude;
-                        var lng = data.latlong.longitude;
-
-                        marker = new google.maps.Marker({
-                            position: new google.maps.LatLng(lat,lng),
-                            map: map,
-                            title: ui.item.label
-                        });
-                        map.panTo(new google.maps.LatLng(lat,lng));
-                        map.setZoom(10);
-                    })
-
-                    $.getJSON("/find/near/" + ui.item.value, function (data) {
-                        if (nearmarkers != undefined) {
-                            for (var i = 0; i < nearmarkers.length; i++) {
-                                nearmarkers[i].setMap(null);
-                            }
-                        }
-                        nearmarkers = new Array();
-                        for (var i = 0; i < data.length; i++) {
-                            var nearby = data[i];
-                            var lat = nearby.latlong.latitude;
-                            var lng = nearby.latlong.longitude;
-
-                            nearmarkers[i] = new google.maps.Marker({
-                                position: new google.maps.LatLng(lat,lng),
-                                map: map,
-                                title: nearby.name
-                            });
-                        }
-                    })
-
-                    this.value = ui.item.label;
-                    return false;
-                }
-            });
-        });
-    </script>
-
+    <script src="js/handlebars.js"></script>
+    <script src="bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div class="navbar navbar-custom navbar-fixed-top">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="#">Optimum Locum</a>
+        <a class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </a>
+    </div>
+    <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+            <li>&nbsp;</li>
+        </ul>
 
-<div class="ui-widget">
-    <label for="locations">Start typing: </label>
-    <input id="locations" size="100%">
+        <input class="typeahead"
+               placeholder="I'm thinking about a move to..."
+               id="locations"
+               type="text" />
+    </div>
 </div>
-<div id="map-canvas"/>
+
+<div id="map-canvas"></div>
+<div class="container-fluid" id="main">
+    <div class="row">
+        <div class="col-xs-8"><!--map-canvas will be postioned here--></div>
+        <div class="col-xs-4" id="left">
+
+            <h2>Bootstrap Google Maps Demo</h2>
+
+            <!-- item list -->
+            <div class="panel panel-default">
+                <div class="panel-heading"><a href="">Item heading</a></div>
+            </div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate.
+                Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis
+                dolor, in sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan.
+                Aliquam in felis sit amet augue.</p>
+
+            <hr>
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><a href="">Item heading</a></div>
+            </div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate.
+                Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis
+                dolor, in sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan.
+                Aliquam in felis sit amet augue.</p>
+
+            <hr>
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><a href="">Item heading</a></div>
+            </div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate.
+                Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis
+                dolor, in sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan.
+                Aliquam in felis sit amet augue.</p>
+
+            <hr>
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><a href="">Item heading</a></div>
+            </div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate.
+                Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis
+                dolor, in sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan.
+                Aliquam in felis sit amet augue.</p>
+
+            <hr>
+            <!-- /item list -->
+
+            <p>
+                <a href="http://www.bootply.com/render/129229">Demo</a> | <a href="http://bootply.com/129229">Source
+                Code</a>
+            </p>
+
+            <hr>
+
+            <p>
+                <a href="http://bootply.com" target="_ext" class="center-block btn btn-primary">More Bootstrap Snippets
+                    on Bootply</a>
+            </p>
+
+            <hr>
+
+        </div>
+
+
+    </div>
+</div>
+<!-- end template -->
+
+<script type="text/javascript">
+var marker;
+var nearmarkers;
+var markerRange;
+
+$(document).ready(function() {
+    $('#locations').on('typeahead:selected', function(event, selection) {
+        if (marker != undefined) marker.setMap(null);
+        var lat = selection.latlong.latitude;
+        var lng = selection.latlong.longitude;
+
+        marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat,lng),
+            map: map,
+            title: selection.name
+        });
+        map.panTo(new google.maps.LatLng(lat,lng));
+        map.setZoom(10);
+
+        if (markerRange != undefined) markerRange.setMap(null);
+        var rangeOptions = {
+          strokeColor: '#0000FF',
+          strokeOpacity: 0.4,
+          strokeWeight: 2,
+          fillColor: '#0000FF',
+          fillOpacity: 0.15,
+          map: map,
+          center: marker.position,
+          radius: 10000
+        };
+        // Add the circle for this city to the map.
+        markerRange = new google.maps.Circle(rangeOptions);
+
+        $.getJSON("/find/near/" + selection.id, function (data) {
+            if (nearmarkers != undefined) {
+                for (var i = 0; i < nearmarkers.length; i++) {
+                    nearmarkers[i].setMap(null);
+                }
+            }
+            nearmarkers = new Array();
+            for (var i = 0; i < data.length; i++) {
+                var nearby = data[i];
+                var lat = nearby.latlong.latitude;
+                var lng = nearby.latlong.longitude;
+
+                nearmarkers[i] = new google.maps.Marker({
+                    position: new google.maps.LatLng(lat,lng),
+                    map: map,
+                    title: nearby.name
+                });
+            }
+        });
+    });
+
+    var map;
+    function initialize() {
+        var mapOptions = {
+            center: new google.maps.LatLng(51.51279, -0.09184),
+            zoom: 8,
+            disableDefaultUI: true
+        };
+        map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+
+    var remoteLocations = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      remote: '/find/name/%QUERY'
+    });
+
+    remoteLocations.initialize();
+
+    $('#locations').typeahead(null, {
+      name: 'remote-locations',
+      displayKey: 'name',
+      source: remoteLocations.ttAdapter(),
+      templates: {
+        empty: [
+          '<div class="empty_message"><p><strong>No matches</strong></p></div>'
+        ].join('\n'),
+        suggestion: Handlebars.compile('<p><strong>{{name}}</strong> ({{latlong.latitude}}, {{latlong.longitude}})</p>')
+      }
+    });
+});
+</script>
 </body>
 </html>

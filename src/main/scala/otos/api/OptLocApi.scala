@@ -1,7 +1,12 @@
 package otos.api
 
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+
 import akka.actor.{Actor, ActorRef}
 import otos.service._
+import spray.http.{MediaTypes, ContentTypeRange, ContentType}
+import spray.http.ContentTypeRange._
+import spray.http.HttpHeaders.{RawHeader, `Content-Type`}
 import spray.httpx.Json4sSupport
 import spray.routing._
 
@@ -49,7 +54,7 @@ trait OptLocApi extends HttpService with Json4sSupport {
           }
         }
       } ~
-        path("name" / """\w+""".r) { name =>
+        path("name" / """[\w\s]+""".r) { name =>
           get {
             complete {
               Await.result(postgresPlacesServiceActor ? NameRequest(name), timeout.duration).asInstanceOf[Seq[Location]]
