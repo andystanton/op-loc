@@ -8,7 +8,7 @@ FROM    ubuntu:12.04
 
 RUN     apt-get update -qq
 
-RUN     apt-get -y -q install wget curl python-software-properties software-properties-common
+RUN     apt-get -y -q install unzip wget curl python-software-properties software-properties-common
 
 RUN     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
