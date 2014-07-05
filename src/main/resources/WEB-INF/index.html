@@ -149,7 +149,7 @@ $(document).ready(function() {
         // Add the circle for this city to the map.
         markerRange = new google.maps.Circle(rangeOptions);
 
-        $.getJSON("/find/near/" + selection.id, function (data) {
+        $.getJSON("find/near/" + selection.id, function (data) {
             if (nearmarkers != undefined) {
                 for (var i = 0; i < nearmarkers.length; i++) {
                     nearmarkers[i].setMap(null);
@@ -185,7 +185,7 @@ $(document).ready(function() {
     var remoteLocations = new Bloodhound({
       datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
       queryTokenizer: Bloodhound.tokenizers.whitespace,
-      remote: '/find/name/%QUERY'
+      remote: 'find/name/%QUERY'
     });
 
     remoteLocations.initialize();

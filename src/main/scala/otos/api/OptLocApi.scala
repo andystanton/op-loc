@@ -4,7 +4,7 @@ import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
 import akka.actor.{Actor, ActorRef}
 import otos.service._
-import spray.http.{MediaTypes, ContentTypeRange, ContentType}
+import spray.http.{StatusCodes, MediaTypes, ContentTypeRange, ContentType}
 import spray.http.ContentTypeRange._
 import spray.http.HttpHeaders.{RawHeader, `Content-Type`}
 import spray.httpx.Json4sSupport
