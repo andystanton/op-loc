@@ -32,21 +32,25 @@ object Build extends sbt.Build {
     }
 
     val compileDependencies = Seq(
-      "com.typesafe.akka"       %%  "akka-actor"        % Versions.akka,
-      "io.spray"                %%  "spray-can"         % Versions.spray,
-      "io.spray"                %%  "spray-routing"     % Versions.spray,
-      "io.spray"                %%  "spray-http"        % Versions.spray,
-      "io.spray"                %%  "spray-httpx"       % Versions.spray,
-      "io.spray"                %%  "spray-client"      % Versions.spray,
-      "io.spray"                %%  "spray-servlet"     % Versions.spray,
-      "org.json4s"              %%  "json4s-native"     % Versions.json4s,
-      "com.github.kxbmap"       %%  "configs"           % Versions.configs,
-      "org.postgresql"          %   "postgresql"        % Versions.postgres,
-      "ch.qos.logback"          %   "logback-classic"   % Versions.logback,
-      "javax.persistence"       %   "persistence-api"   % Versions.jpa,
-      "javax.servlet"           %   "javax.servlet-api" % "3.0.1" % "provided",
-      "org.eclipse.jetty"       %   "jetty-webapp"      % "9.1.0.v20131115" % "container;compile",
-      "org.eclipse.jetty"       %   "jetty-plus"        % "9.1.0.v20131115" % "container;compile"
+      "com.typesafe.akka"       %%  "akka-actor"            % Versions.akka,
+      "io.spray"                %%  "spray-can"             % Versions.spray,
+      "io.spray"                %%  "spray-routing"         % Versions.spray,
+      "io.spray"                %%  "spray-http"            % Versions.spray,
+      "io.spray"                %%  "spray-httpx"           % Versions.spray,
+      "io.spray"                %%  "spray-client"          % Versions.spray,
+      "io.spray"                %%  "spray-servlet"         % Versions.spray,
+      "org.json4s"              %%  "json4s-native"         % Versions.json4s,
+      "com.github.kxbmap"       %%  "configs"               % Versions.configs,
+      "org.postgresql"          %   "postgresql"            % Versions.postgres,
+      "ch.qos.logback"          %   "logback-classic"       % Versions.logback,
+      "javax.persistence"       %   "persistence-api"       % Versions.jpa,
+      "javax.servlet"           %   "javax.servlet-api"     % "3.0.1"             % "provided",
+      "org.eclipse.jetty"       %   "jetty-webapp"          % "9.1.0.v20131115"   % "container;compile",
+      "org.eclipse.jetty"       %   "jetty-plus"            % "9.1.0.v20131115"   % "container;compile",
+      "org.webjars"             %   "angular-google-maps"   % "1.2.0-2",
+      "org.webjars"             %   "bootstrap"             % "3.2.0",
+      "org.webjars"             %   "angular-ui-bootstrap"  % "0.11.0-2",
+      "org.webjars"             %   "jquery-ui"             % "1.11.1"
     )
 
     val testDependencies = Seq(

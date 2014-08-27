@@ -71,6 +71,9 @@ trait OptLocApi extends HttpService with Json4sSupport {
           }
         }
     } ~
+    pathPrefix("webjars") {
+      getFromResourceDirectory("META-INF/resources/webjars")
+    } ~
     pathPrefix("") {
       get {
         getFromResourceDirectory("WEB-INF")

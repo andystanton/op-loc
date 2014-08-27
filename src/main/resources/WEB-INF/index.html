@@ -1,25 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="optLocApp">
 <head>
     <title>WhereYouShould.Be</title>
 
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta charset="utf-8">
-    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/webjars/jquery-ui/1.11.1/jquery-ui.min.css" rel="stylesheet">
+    <link href="/webjars/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
     <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCx3LJgxX7QqjEQE6GfdUeFFnlgQPK3XTo"></script>
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
-    <script src="bower_components/handlebars/handlebars.min.js"></script>
-    <script src="bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
+
+    <script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+    <script src="/webjars/jquery-ui/1.11.1/jquery-ui.min.js"></script>
+
+    <script src="/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src='/webjars/angularjs/1.2.22/angular.min.js'></script>
+    <script src='/webjars/angular-ui-bootstrap/0.11.0/ui-bootstrap-tpls.min.js'></script>
+
+    <script src='/webjars/lodash/2.4.1-6/lodash.underscore.min.js'></script>
+    <script src='/webjars/angular-google-maps/1.2.0-2/angular-google-maps.min.js'></script>
+
+    <script src="js/slider.js"></script>
+
+    <script src="js/optLocApp.js"></script>
 </head>
-<body>
+<body ng-controller="mapController">
 <div class="navbar navbar-custom navbar-fixed-top">
     <div class="navbar-header">
         <a class="navbar-brand" href="#">WhereYouShould.Be</a>
@@ -29,33 +40,40 @@
             <span class="icon-bar"></span>
         </a>
     </div>
-    <div class="navbar-collapse collapse">
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#">Link</a></li>
-            <li><a href="#">Link</a></li>
-            <li>&nbsp;</li>
-        </ul>
-
-        <input class="typeahead"
-               placeholder="I'm thinking about a move to..."
-               id="locations"
-               type="text" />
+    <div class="navbar-collapse collapse" ng-controller="searchController">
+        <input type="text"
+               ng-model="asyncSelected"
+               placeholder="I'm thinking of a move to..."
+               typeahead="address as address.name for address in getOptLoc($viewValue)"
+               typeahead-loading="loadingLocations"
+               typeahead-editable="false"
+               typeahead-min-length="3"
+               typeahead-wait-ms="500"
+               typeahead-on-select="onSelect($item, $model, $label)"
+               class="form-control location-selector">
+        <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
     </div>
 </div>
 
-<div id="map-canvas"></div>
+<div>
+    <google-map center="map.center" zoom="map.zoom" draggable="true">
+        <markers models="map.markers" coords="'self'" icon="'icon'">
+        </markers>
+    </google-map>
+</div>
+
 <div class="container-fluid" id="main">
     <div class="row">
         <div class="col-xs-8"><!--map-canvas will be postioned here--></div>
-        <div class="col-xs-4" id="left">
+        <div class="col-xs-4" id="left" ng-controller="optionsController">
 
             <h2>Bootstrap Google Maps Demo</h2>
 
             <!-- item list -->
             <div class="panel panel-default">
-                <div class="panel-heading"><a href="">Item heading</a></div>
+                <div class="panel-heading"><a href="">Population</a></div>
             </div>
+            <div ui-slider="{range: true}" min="-1.00" max="1.00" step="0.01" use-decimals ng-model="demoVals.sliderExample9"></div>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate.
                 Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis
                 dolor, in sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan.
@@ -107,100 +125,9 @@
             </p>
 
             <hr>
-
         </div>
-
-
     </div>
 </div>
 <!-- end template -->
-
-<script type="text/javascript">
-var marker;
-var nearmarkers;
-var markerRange;
-
-$(document).ready(function() {
-    $('#locations').on('typeahead:selected', function(event, selection) {
-        if (marker != undefined) marker.setMap(null);
-        var lat = selection.latlong.latitude;
-        var lng = selection.latlong.longitude;
-
-        marker = new google.maps.Marker({
-            position: new google.maps.LatLng(lat,lng),
-            map: map,
-            title: selection.name
-        });
-        map.panTo(new google.maps.LatLng(lat,lng));
-        map.setZoom(10);
-
-        if (markerRange != undefined) markerRange.setMap(null);
-        var rangeOptions = {
-          strokeColor: '#0000FF',
-          strokeOpacity: 0.4,
-          strokeWeight: 2,
-          fillColor: '#0000FF',
-          fillOpacity: 0.15,
-          map: map,
-          center: marker.position,
-          radius: 10000
-        };
-        // Add the circle for this city to the map.
-        markerRange = new google.maps.Circle(rangeOptions);
-
-        $.getJSON("find/near/" + selection.id, function (data) {
-            if (nearmarkers != undefined) {
-                for (var i = 0; i < nearmarkers.length; i++) {
-                    nearmarkers[i].setMap(null);
-                }
-            }
-            nearmarkers = new Array();
-            for (var i = 0; i < data.length; i++) {
-                var nearby = data[i];
-                var lat = nearby.latlong.latitude;
-                var lng = nearby.latlong.longitude;
-
-                nearmarkers[i] = new google.maps.Marker({
-                    position: new google.maps.LatLng(lat,lng),
-                    map: map,
-                    title: nearby.name
-                });
-            }
-        });
-    });
-
-    var map;
-    function initialize() {
-        var mapOptions = {
-            center: new google.maps.LatLng(51.51279, -0.09184),
-            zoom: 8,
-            disableDefaultUI: true
-        };
-        map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-    }
-    google.maps.event.addDomListener(window, 'load', initialize);
-
-
-    var remoteLocations = new Bloodhound({
-      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-      queryTokenizer: Bloodhound.tokenizers.whitespace,
-      remote: 'find/name/%QUERY'
-    });
-
-    remoteLocations.initialize();
-
-    $('#locations').typeahead(null, {
-      name: 'remote-locations',
-      displayKey: 'name',
-      source: remoteLocations.ttAdapter(),
-      templates: {
-        empty: [
-          '<div class="empty_message"><p><strong>No matches</strong></p></div>'
-        ].join('\n'),
-        suggestion: Handlebars.compile('<p><strong>{{name}}</strong> ({{latlong.latitude}}, {{latlong.longitude}})</p>')
-      }
-    });
-});
-</script>
 </body>
 </html>
