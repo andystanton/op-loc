@@ -30,7 +30,7 @@
 
     <script src="js/optLocApp.js"></script>
 </head>
-<body ng-controller="mapController">
+<body>
 <div class="navbar navbar-custom navbar-fixed-top">
     <div class="navbar-header">
         <a class="navbar-brand" href="#">WhereYouShould.Be</a>
@@ -42,9 +42,9 @@
     </div>
     <div class="navbar-collapse collapse" ng-controller="searchController">
         <input type="text"
-               ng-model="asyncSelected"
+               ng-model="selectedLocation"
                placeholder="I'm thinking of a move to..."
-               typeahead="address as address.name for address in getOptLoc($viewValue)"
+               typeahead="location as location.name for location in getOptLoc($viewValue)"
                typeahead-loading="loadingLocations"
                typeahead-editable="false"
                typeahead-min-length="3"
@@ -55,7 +55,7 @@
     </div>
 </div>
 
-<div>
+<div ng-controller="mapController">
     <google-map center="map.center" zoom="map.zoom" draggable="true">
         <markers models="map.markers" coords="'self'" icon="'icon'">
         </markers>

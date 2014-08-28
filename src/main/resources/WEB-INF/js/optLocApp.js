@@ -1,6 +1,23 @@
 var app = angular.module('optLocApp', ['google-maps', 'ui.bootstrap', 'ui.slider']);
 
-app.controller("mapController", function($scope) {
+app.factory('optLocService', function($rootScope) {
+    var optLocService = {};
+
+    optLocService.location = '';
+
+    optLocService.selectLocation = function(newLocation) {
+        this.location = newLocation;
+        this.broadcastItem();
+    };
+
+    optLocService.broadcastItem = function() {
+        $rootScope.$broadcast('selectLocationEvent');
+    };
+
+    return optLocService;
+});
+
+app.controller("mapController", function($scope, optLocService) {
     $scope.map = {
         center: {
             latitude: 51.51279,
@@ -10,39 +27,39 @@ app.controller("mapController", function($scope) {
         markers: []
     };
 
-    $scope.$on('someEvent', function(event, args) {
-        $scope.map.markers = [];
+    $scope.$on('selectLocationEvent', function() {
+        var location = optLocService.location;
+
         $scope.map.markers = [{
-            id: args.id,
-            latitude: args.latlong.latitude,
-            longitude: args.latlong.longitude
+            id: location.id,
+            latitude: location.latlong.latitude,
+            longitude: location.latlong.longitude
         }];
         console.log($scope.map.markers);
     });
 });
 
-app.controller("searchController", function($scope, $http) {
-  $scope.selected = undefined;
+app.controller("searchController", function($scope, $http, optLocService) {
+    $scope.selected = undefined;
 
-  $scope.getOptLoc = function(val) {
-    return $http.get('/find/name/' + val).then(function(res) {
-      var addresses = [];
-      angular.forEach(res.data, function(item) {
-        addresses.push(item);
-      });
-      return addresses;
-    });
-  }
+    $scope.getOptLoc = function(searchString) {
+        return $http.get('/find/name/' + searchString).then(function(response) {
+            var locations = [];
 
-  $scope.onSelect = function($item, $model, $label) {
-    console.log("emitting event");
-    $scope.$emit('someEvent', $item);
-  };
+            angular.forEach(response.data, function(location) {
+                locations.push(location);
+            });
+            return locations;
+        });
+    }
+
+    $scope.onSelect = function($item, $model, $label) {
+        optLocService.selectLocation($item);
+    };
 });
 
 app.controller("optionsController", function($scope, $http) {
     $scope.demoVals = {
-        sliderExample9:     [-0.52, 0.54]
+        sliderExample9: [-0.52, 0.54]
     };
 });
-
