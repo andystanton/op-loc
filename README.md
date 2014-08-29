@@ -6,7 +6,6 @@ API for evaluating the suitability of candidate locations based on configurable 
 
 * sbt >= 0.13.5
 * postgresql >= 9.3 + postgis >= 2.1
-* bower >= 1.3.5
 
 ## Quick Start
 
@@ -20,9 +19,6 @@ $BASEDIR/database/setup.sh
 
 # setup properties
 cp $BASEDIR/src/main/resources/opt-loc.properties.example $BASEDIR/src/main/resources/opt-loc.properties
-
-# setup front end
-cd $BASEDIR/src/main/resources/WEB-INF && bower update
 
 # go back to thr project root. we can launch sbt from here
 cd $BASEDIR
@@ -38,7 +34,7 @@ From inside sbt, start up the server using the Revolver plugin re-start command 
 ~re-start
 ```
 
-A location search will now be available on [http://localhost:8080](http://localhost:8080).
+The application will be available on [http://localhost:8080](http://localhost:8080).
 
 ## Features
 
