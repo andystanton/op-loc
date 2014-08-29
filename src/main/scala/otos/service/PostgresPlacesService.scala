@@ -118,7 +118,7 @@ trait PostgresPlacesService {
           |WHERE
           |  id != '$id'
           |  AND feature_class='P'
-          |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.latlong.latitude}, ${location.latlong.longitude})) <= ${range * 1000}
+          |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.latlong.latitude}, ${location.latlong.longitude})) <= $range
           |  AND population BETWEEN $minPopulation AND ${maxPopulation.getOrElse(PopulationCeiling)}
           |ORDER BY
           |  name ASC

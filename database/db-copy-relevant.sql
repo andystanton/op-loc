@@ -10,7 +10,8 @@ INSERT INTO public.places_gb(
             admin_code_3,
             population,
             geoname_id)
-    (SELECT name,
+    (SELECT
+        name,
         ST_SetSRID(ST_MakePoint(latitude, longitude), 4326),
         feature_class,
         feature_code,
@@ -19,7 +20,10 @@ INSERT INTO public.places_gb(
         admin_code_3,
         population,
         geoname_id
-    FROM public.raw_places_gb);
+    FROM
+        public.raw_places_gb
+    WHERE
+        name != 'City of London');
 
 
 
