@@ -56,8 +56,8 @@
 </div>
 
 <div ng-controller="mapController">
-    <google-map center="map.center" zoom="map.zoom" draggable="true">
-        <markers models="map.markers" coords="'self'" icon="'icon'"></markers>
+    <google-map center="map.center" zoom="map.zoom" draggable="true" control="blah">
+        <markers models="map.markers" coords="'self'" icon="'icon'" options="'options'" isLabel="true"></markers>
         <circle center="map.range.center"
                 radius="map.range.radius"
                 fill="map.range.fill"

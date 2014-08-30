@@ -9,17 +9,16 @@ app.factory('optLocService', function($rootScope, $http) {
         range: 10000
     };
 
-    optLocService.updateOptions = function(range) {
-        this.options.range = range;
-        if ('undefined' !== typeof this.location.id) {
+    optLocService.refresh = function() {
+        if (typeof this.location.id !== 'undefined') {
             optLocService.selectLocation(this.location)
         }
     }
 
-    optLocService.selectLocation = function(newLocation) {
-        this.location = newLocation;
+    optLocService.selectLocation = function(selectedLocation) {
+        this.location = selectedLocation;
         $http({
-            url: '/find/near/' + newLocation.id,
+            url: '/find/near/' + selectedLocation.id,
             method: "GET",
             params: {
                 range: optLocService.options.range
@@ -48,30 +47,44 @@ app.controller("mapController", function($scope, optLocService) {
     };
 
     $scope.$on('updateLocationEvent', function() {
-        var location = optLocService.location;
-        var options = optLocService.options;
+        var rawLocation = optLocService.location;
 
-        $scope.map.markers = [{
-            id: location.id,
-            latitude: location.latlong.latitude,
-            longitude: location.latlong.longitude
-        }];
+        var location = {
+            id: rawLocation.id,
+            latitude: rawLocation.latlong.latitude,
+            longitude: rawLocation.latlong.longitude,
+            options: {
+                labelContent: rawLocation.name
+            }
+        };
 
-        angular.forEach(optLocService.nearbyLocations, function(location) {
-            $scope.map.markers.push({
-                id: location.id,
-                latitude: location.latlong.latitude,
-                longitude: location.latlong.longitude
-            });
-        });
+        var nearbyLocations = _.map(optLocService.nearbyLocations, function(rawLocation) {
+            return {
+                id: rawLocation.id,
+                latitude: rawLocation.latlong.latitude,
+                longitude: rawLocation.latlong.longitude,
+                options: {
+                    labelContent: rawLocation.name
+                }
+            };
+        })
+
+        $scope.map.markers = _.union([location], nearbyLocations);
+
+        $scope.map.center = {
+            latitude: location.latitude,
+            longitude: location.longitude
+        }
+
+        $scope.map.zoom = 11;
 
         $scope.map.range = {
             id: 1,
             center: {
-                latitude: location.latlong.latitude,
-                longitude: location.latlong.longitude
+                latitude: location.latitude,
+                longitude: location.longitude
             },
-            radius: options.range,
+            radius: optLocService.options.range,
             stroke: {
                 color: '#08B21F',
                 weight: 2,
@@ -81,7 +94,7 @@ app.controller("mapController", function($scope, optLocService) {
                 color: '#08B21F',
                 opacity: 0.5
             },
-            visible: (typeof location.id != undefined)
+            visible: (typeof location.id !== 'undefined')
         };
     });
 });
@@ -93,7 +106,7 @@ app.controller("searchController", function($scope, $http, optLocService) {
         return $http.get('/find/name/' + searchString).then(function(response) {
             var locations = [];
 
-            angular.forEach(response.data, function(location) {
+            _.each(response.data, function(location) {
                 locations.push(location);
             });
             return locations;
@@ -107,7 +120,8 @@ app.controller("searchController", function($scope, $http, optLocService) {
 
 app.controller("optionsController", function($scope, optLocService) {
     function rangeChange(event, ui) {
-        optLocService.updateOptions($scope.options.range);
+        optLocService.options.range = $scope.options.range;
+        optLocService.refresh();
     }
 
     $scope.rangeOptions = {
