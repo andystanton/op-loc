@@ -36,14 +36,15 @@ app.factory('optLocService', function($rootScope, $http) {
     return optLocService;
 });
 
-app.controller("mapController", function($scope, optLocService) {
+app.controller("mapController", function($scope, $http, optLocService) {
     $scope.map = {
         center: {
             latitude: 51.51279,
             longitude: -0.09184
         },
         zoom: 8,
-        markers: []
+        markers: [],
+        control: {}
     };
 
     $scope.$on('updateLocationEvent', function() {
@@ -67,14 +68,14 @@ app.controller("mapController", function($scope, optLocService) {
                     labelContent: rawLocation.name
                 }
             };
-        })
+        });
 
         $scope.map.markers = _.union([location], nearbyLocations);
 
         $scope.map.center = {
             latitude: location.latitude,
             longitude: location.longitude
-        }
+        };
 
         $scope.map.zoom = 11;
 
@@ -97,6 +98,15 @@ app.controller("mapController", function($scope, optLocService) {
             visible: (typeof location.id !== 'undefined')
         };
     });
+
+    var init = function () {
+        var searchString = 'London';
+        $http.get('/find/name/' + searchString).then(function(response) {
+            optLocService.selectLocation(response.data[0]);
+        });
+    };
+
+    init();
 });
 
 app.controller("searchController", function($scope, $http, optLocService) {
@@ -104,12 +114,7 @@ app.controller("searchController", function($scope, $http, optLocService) {
 
     $scope.getOptLoc = function(searchString) {
         return $http.get('/find/name/' + searchString).then(function(response) {
-            var locations = [];
-
-            _.each(response.data, function(location) {
-                locations.push(location);
-            });
-            return locations;
+            return response.data;
         });
     }
 
