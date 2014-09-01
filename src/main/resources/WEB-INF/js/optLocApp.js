@@ -124,9 +124,16 @@ app.controller("searchController", function($scope, $http, optLocService) {
 });
 
 app.controller("optionsController", function($scope, optLocService) {
+    function rangeChange(event, ui) {
+        // leaving this in - might want to scale drawn circle in real
+        // time but update markers only when slider stops.
+    }
+
     $scope.rangeOptions = {
         orientation: 'vertical',
-        range: 'min'
+        range: 'min',
+        change: rangeChange,
+        slide: rangeChange
     };
 
     $scope.options = {
