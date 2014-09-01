@@ -124,19 +124,17 @@ app.controller("searchController", function($scope, $http, optLocService) {
 });
 
 app.controller("optionsController", function($scope, optLocService) {
-    function rangeChange(event, ui) {
-        optLocService.options.range = $scope.options.range;
-        optLocService.refresh();
-    }
-
     $scope.rangeOptions = {
         orientation: 'vertical',
-        range: 'min',
-        change: rangeChange,
-        slide: rangeChange
+        range: 'min'
     };
 
     $scope.options = {
         range: 10000
     };
+
+    $scope.$watch('options.range', function() {
+        optLocService.options.range = $scope.options.range;
+        optLocService.refresh();
+    });
 });

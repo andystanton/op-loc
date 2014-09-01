@@ -22,6 +22,7 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                 // convenience properties
                 var properties = ['min', 'max', 'step'];
                 var useDecimals = (!angular.isUndefined(attrs.useDecimals)) ? true : false;
+                var delay = angular.isDefined(attrs.delay) ? parseNumber(attrs.delay) : 0;
 
                 var init = function() {
                     // When ngModel is assigned an array of values then range is expected to be true.
@@ -72,17 +73,23 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                 // Late-bind to prevent compiler clobbering
                 $timeout(init, 0, true);
 
+                // Add delay timer
+                var delayTimer;
+
                 // Update model value from slider
                 elm.bind('slide', function(event, ui) {
-                    ngModel.$setViewValue(ui.values || ui.value);
-                    scope.$apply();
+                    clearTimeout(delayTimer);
+                    delayTimer = setTimeout(function() {
+                        ngModel.$setViewValue(ui.values || ui.value);
+                        scope.$apply();
+                    }, delay);
                 });
 
                 // Update slider from model value
                 ngModel.$render = function() {
                     init();
                     var method = options.range === true ? 'values' : 'value';
-
+                    
                     if (!options.range && isNaN(ngModel.$viewValue) && !(ngModel.$viewValue instanceof Array)) {
                         ngModel.$viewValue = 0;
                     }
@@ -92,7 +99,7 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
 
                     // Do some sanity check of range values
                     if (options.range === true) {
-
+                        
                         // Check outer bounds for min and max values
                         if (angular.isDefined(options.min) && options.min > ngModel.$viewValue[0]) {
                             ngModel.$viewValue[0] = options.min;
