@@ -58,8 +58,8 @@ app.controller("mapController", function($scope, $http, optLocService) {
         }
         donut = new google.maps.Polygon({
             paths: [
-                drawCircle(new google.maps.LatLng(rawLatLong.latitude, rawLatLong.longitude), 100, 1),
-                drawCircle(new google.maps.LatLng(rawLatLong.latitude, rawLatLong.longitude), 50, -1)
+                drawCircle(new google.maps.LatLng(rawLatLong.latitude, rawLatLong.longitude), optLocService.options.range, 1),
+                drawCircle(new google.maps.LatLng(rawLatLong.latitude, rawLatLong.longitude), optLocService.options.range - 5000, -1)
             ],
             strokeColor: "#0000FF",
             strokeOpacity: 0.8,
@@ -123,7 +123,7 @@ app.controller("mapController", function($scope, $http, optLocService) {
     function drawCircle(point, radius, dir) {
         var d2r = Math.PI / 180;    // degrees to radians
         var r2d = 180 / Math.PI;    // radians to degrees
-        var earthsradius = 3963;    // 3963 is the radius of the earth in miles
+        var earthsradius = 6377830;    // 3963 is the radius of the earth in miles
 
         var points = 32;
 
@@ -134,13 +134,13 @@ app.controller("mapController", function($scope, $http, optLocService) {
 
         var extp = new Array();
         if (dir == 1) {
-            var start=0;
-            var end=points+1 // one extra here makes sure we connect the
+            var start = 0;
+            var end = points + 1 // one extra here makes sure we connect the
         } else {
-            var start=points + 1;
-            var end=0
+            var start = points + 1;
+            var end = 0
         }
-        for (var i=start; (dir==1 ? i < end : i > end); i=i+dir) {
+        for (var i = start; (dir==1 ? i < end : i > end); i = i + dir) {
             var theta = Math.PI * (i / (points/2));
             ey = point.lng() + (rlng * Math.cos(theta)); // center a + radius x * cos(theta)
             ex = point.lat() + (rlat * Math.sin(theta)); // center b + radius y * sin(theta)
