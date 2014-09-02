@@ -63,7 +63,7 @@ trait OptLocApi extends HttpService with Json4sSupport {
         } ~
         path("near" / """\d+""".r) { id =>
           get {
-            parameters("range" ? 10, "minpop" ? 1000, "maxpop" ?).as(NearParams) { nearParams =>
+            parameters("range-min" ? 0, "range-max" ? 10000, "population-min" ? 1000, "population-max" ?).as(NearParams) { nearParams =>
               complete {
                 Await.result(postgresPlacesServiceActor ? NearRequest(id.toInt, nearParams), timeout.duration).asInstanceOf[Seq[Location]]
               }

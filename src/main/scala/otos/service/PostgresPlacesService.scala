@@ -8,7 +8,7 @@ import com.typesafe.config.ConfigFactory
 case class IdRequest(id: Int)
 case class NameRequest(name: String)
 case class NearRequest(id: Int, params: NearParams)
-case class NearParams(range: Int, minpop: Long, maxpop: Option[Long])
+case class NearParams(minRange: Option[Int], maxRange: Option[Int], minPopulation: Option[Long], maxPopulation: Option[Long])
 
 class PostgresPlacesServiceActor extends Actor with PostgresPlacesService {
   val config = ConfigFactory.load("opt-loc.properties")
@@ -22,8 +22,8 @@ class PostgresPlacesServiceActor extends Actor with PostgresPlacesService {
       sender ! findById(id)
     case NameRequest(name) =>
       sender ! findByName(name)
-    case NearRequest(id, NearParams(range, minPopulation, maxPopulation)) =>
-      sender ! findNear(id, range, minPopulation, maxPopulation)
+    case NearRequest(id, NearParams(minRange, maxRange, minPopulation, maxPopulation)) =>
+      sender ! findNear(id, minRange, maxRange, minPopulation, maxPopulation)
   }
 }
 
@@ -101,11 +101,13 @@ trait PostgresPlacesService {
 
   def findNear(
     id: Int,
-    range: Int,
-    minPopulation: Long,
+    minRange: Option[Int],
+    maxRange: Option[Int],
+    minPopulation: Option[Long],
     maxPopulation: Option[Long]
   ) : List[Location] = {
-    val PopulationCeiling = 7000000000L
+    val populationCeiling = 7000000000L
+
     val location = findById(id)
     val query =
       s"""|SELECT
@@ -118,8 +120,9 @@ trait PostgresPlacesService {
           |WHERE
           |  id != '$id'
           |  AND feature_class='P'
-          |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.latlong.latitude}, ${location.latlong.longitude})) <= $range
-          |  AND population BETWEEN $minPopulation AND ${maxPopulation.getOrElse(PopulationCeiling)}
+          |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.latlong.latitude}, ${location.latlong.longitude})) <= ${maxRange.get}
+          |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.latlong.latitude}, ${location.latlong.longitude})) >= ${minRange.get}
+          |  AND population BETWEEN ${minPopulation.get} AND ${maxPopulation.getOrElse(populationCeiling)}
           |ORDER BY
           |  name ASC
           |""".stripMargin
