@@ -5,33 +5,28 @@ API for evaluating the suitability of candidate locations based on configurable 
 ## Requirements
 
 * sbt >= 0.13.5
-* postgresql >= 9.3 + postgis >= 2.1
+* docker >= 1.0
 
 ## Quick Start
 
-You will need to have postgres installed and running with postgis support. Clone the project and initialise the database:
+
 
 ```sh
-BASEDIR=$PWD/opt-loc && git clone https://github.com/andystanton/opt-loc.git $BASEDIR
+git clone https://github.com/andystanton/opt-loc.git
 
-# setup database
-$BASEDIR/database/setup.sh
+cd opt-loc
 
-# setup properties
-cp $BASEDIR/src/main/resources/opt-loc.properties.example $BASEDIR/src/main/resources/opt-loc.properties
+docker build -t andystanton/optloc-db database
 
-# go back to thr project root. we can launch sbt from here
-cd $BASEDIR
+CID=$(docker run -d -p 5432:5432 andystanton/optloc-db)
+
+echo "Postgres IP: "$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${CID})
 ```
 
-If your postgres database runs on anything other than ```localhost:5432``` update ```src/main/resources/opt-loc.properties``` with the correct hostname and port.
-
-### sbt
-
-From inside sbt, start up the server using the Revolver plugin re-start command (re-stop shuts it down):
+Update ```src/main/resources/opt-loc.properties``` with the Postgres IP. Then run the application:
 
 ```
-~re-start
+sbt run
 ```
 
 The application will be available on [http://localhost:8080](http://localhost:8080).
