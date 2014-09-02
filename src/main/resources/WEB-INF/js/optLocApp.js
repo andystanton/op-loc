@@ -61,15 +61,13 @@ app.controller("mapController", function($scope, $http, optLocService) {
                 drawCircle(new google.maps.LatLng(rawLatLong.latitude, rawLatLong.longitude), optLocService.options.range, 1),
                 drawCircle(new google.maps.LatLng(rawLatLong.latitude, rawLatLong.longitude), optLocService.options.range - 5000, -1)
             ],
-            strokeColor: "#0000FF",
+            strokeColor: "#08B21F",
             strokeOpacity: 0.8,
             strokeWeight: 2,
-            fillColor: "#FF0000",
-            fillOpacity: 0.35
+            fillColor: "#08B21F",
+            fillOpacity: 0.5
         });
         donut.setMap($scope.map.control.getGMap());
-
-
 
         var location = {
             id: rawLocation.id,
@@ -100,24 +98,24 @@ app.controller("mapController", function($scope, $http, optLocService) {
 
         $scope.map.zoom = 11;
 
-        $scope.map.range = {
-            id: 1,
-            center: {
-                latitude: location.latitude,
-                longitude: location.longitude
-            },
-            radius: optLocService.options.range,
-            stroke: {
-                color: '#08B21F',
-                weight: 2,
-                opacity: 1
-            },
-            fill: {
-                color: '#08B21F',
-                opacity: 0.5
-            },
-            visible: (typeof location.id !== 'undefined')
-        };
+//        $scope.map.range = {
+//            id: 1,
+//            center: {
+//                latitude: location.latitude,
+//                longitude: location.longitude
+//            },
+//            radius: optLocService.options.range,
+//            stroke: {
+//                color: '#08B21F',
+//                weight: 2,
+//                opacity: 1
+//            },
+//            fill: {
+//                color: '#08B21F',
+//                opacity: 0.5
+//            },
+//            visible: (typeof location.id !== 'undefined')
+//        };
     });
 
     function drawCircle(point, radius, dir) {
