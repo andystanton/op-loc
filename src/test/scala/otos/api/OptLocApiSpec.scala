@@ -7,11 +7,7 @@ import otos.util.FixtureLoading
 import spray.http.StatusCodes._
 import spray.testkit.ScalatestRouteTest
 
-class GooglePlacesServiceActorStub extends GooglePlacesServiceActor {
-  override def receive = {
-    case _ => sender ! Location(-1, "Newbury, West Berkshire, UK", Center(51.401409, -1.3231139), 20000)
-  }
-}
+
 
 class PostgresPlacesServiceActorStub extends PostgresPlacesServiceActor {
   override def receive = {
@@ -29,7 +25,6 @@ class PostgresPlacesServiceActorStub extends PostgresPlacesServiceActor {
 class OptLocApiSpec extends FunSpec with ScalatestRouteTest with OptLocApi with FixtureLoading with Matchers {
   def actorRefFactory = system
 
-  val googlePlacesServiceActor = TestActorRef[GooglePlacesServiceActorStub]
   val postgresPlacesServiceActor = TestActorRef[PostgresPlacesServiceActorStub]
 
   describe("the Optimum Locum API") {
@@ -69,15 +64,6 @@ class OptLocApiSpec extends FunSpec with ScalatestRouteTest with OptLocApi with 
             locations should contain (Location(2, "Thatcham", Center(51.40366, -1.26049), 20000))
             locations should contain (Location(3, "Highclere", Center(51.3386, -1.37569), 20000))
           }
-        }
-      }
-    }
-
-    describe("the /googleplaces endpoint") {
-      it("responds with the latitude and longitude of the search target") {
-        Get("/googleplaces/newbury") ~> optLocApiRoute ~> check {
-          status shouldBe OK
-          responseAs[Location] shouldBe Location(-1, "Newbury, West Berkshire, UK", Center(51.401409, -1.3231139), 20000)
         }
       }
     }

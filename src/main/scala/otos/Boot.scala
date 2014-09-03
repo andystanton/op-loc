@@ -3,7 +3,7 @@ package otos
 import akka.actor.{ActorSystem, Props}
 import akka.util.Timeout
 import otos.api.OptLocApiActor
-import otos.service.{GooglePlacesServiceActor, PostgresPlacesServiceActor}
+import otos.service.PostgresPlacesServiceActor
 import spray.servlet.WebBoot
 
 import scala.concurrent.duration._
@@ -24,10 +24,9 @@ class Boot extends WebBoot {
   implicit val system = ActorSystem("opt-loc-actor-system")
   implicit val timeout = Timeout(5.seconds)
 
-  val googlePlacesService = system.actorOf(Props[GooglePlacesServiceActor], "google-places-service")
   val postgresPlacesService = system.actorOf(Props[PostgresPlacesServiceActor], "postgres-places-service")
 
-  val serviceActor = system.actorOf(Props(classOf[OptLocApiActor], googlePlacesService, postgresPlacesService), "opt-loc-api")
+  val serviceActor = system.actorOf(Props(classOf[OptLocApiActor], postgresPlacesService), "opt-loc-api")
 
   system.registerOnTermination {
     // put additional cleanup code here

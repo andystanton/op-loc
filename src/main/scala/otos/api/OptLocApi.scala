@@ -1,16 +1,11 @@
 package otos.api
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
-
 import akka.actor.{Actor, ActorRef}
 import otos.service._
-import spray.http.{StatusCodes, MediaTypes, ContentTypeRange, ContentType}
-import spray.http.ContentTypeRange._
-import spray.http.HttpHeaders.{RawHeader, `Content-Type`}
 import spray.httpx.Json4sSupport
 import spray.routing._
 
-class OptLocApiActor(val googlePlacesServiceActor: ActorRef, val postgresPlacesServiceActor: ActorRef) extends Actor with OptLocApi {
+class OptLocApiActor(val postgresPlacesServiceActor: ActorRef) extends Actor with OptLocApi {
   def actorRefFactory = context
   def receive = runRoute(optLocApiRoute)
 }
@@ -21,14 +16,13 @@ trait OptLocApi extends HttpService with Json4sSupport {
   import org.json4s._
   import org.json4s.native.Serialization
 
-  import scala.concurrent.Await
+import scala.concurrent.Await
   import scala.concurrent.duration._
   import scala.language.postfixOps
 
   implicit val json4sFormats = Serialization.formats(NoTypeHints)
   implicit val timeout = Timeout(10 seconds)
 
-  implicit def googlePlacesServiceActor: ActorRef
   implicit def postgresPlacesServiceActor: ActorRef
 
   val optLocApiRoute = {
@@ -36,13 +30,6 @@ trait OptLocApi extends HttpService with Json4sSupport {
       get {
         complete {
           Map("code" -> 200)
-        }
-      }
-    } ~
-    path("googleplaces" / """\w+""".r) { locationSearch =>
-      get {
-        complete {
-          Await.result(googlePlacesServiceActor ? locationSearch, timeout.duration).asInstanceOf[Location]
         }
       }
     } ~
