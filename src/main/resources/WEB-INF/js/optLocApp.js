@@ -20,15 +20,22 @@ app.factory('optLocService', function($rootScope, $http) {
 
     optLocService.selectLocation = function(selectedLocation) {
         this.location = selectedLocation;
+
+        var params = {
+            'range-min': optLocService.options['range-min'],
+            'range-max': optLocService.options['range-max'],
+            'population-min': optLocService.options['population-min']
+        }
+
+        if (typeof optLocService.options['population-max'] !== 'undefined') {
+            console.log("setting max pop to " + optLocService.options['population-max'])
+            params['population-max'] = optLocService.options['population-max'];
+        }
+
         $http({
             url: '/find/near/' + selectedLocation.id,
             method: "GET",
-            params: {
-                'range-min': optLocService.options['range-min'],
-                'range-max': optLocService.options['range-max'],
-                'population-min': optLocService.options['population-min'],
-                'population-max': optLocService.options['population-max']
-            }
+            params: params
         }).then(function(response) {
             optLocService.nearbyLocations = response.data;
             optLocService.broadcastItem();
@@ -48,12 +55,15 @@ app.controller("mapController", function($scope, $http, optLocService) {
             latitude: 51.51279,
             longitude: -0.09184
         },
-        zoom: 8,
+        zoom: 1,
         markers: [],
-        control: {}
+        control: {},
+        bounds: {}
     };
 
-    var donut;
+    $scope.map.bounds = {};
+
+    var donut = undefined;
 
     $scope.$on('updateLocationEvent', function() {
         var rawLocation = optLocService.location;
@@ -63,17 +73,26 @@ app.controller("mapController", function($scope, $http, optLocService) {
             donut.setMap(null);
         }
         donut = new google.maps.Polygon({
-            paths: [
-                drawCircle(new google.maps.LatLng(center.latitude, center.longitude), optLocService.options['range-max'] + 500, 1),
-                drawCircle(new google.maps.LatLng(center.latitude, center.longitude), optLocService.options['range-min'] - 500, -1)
-            ],
+            paths: drawDonut(center, optLocService.options['range-max'], optLocService.options['range-min'], 500),
             strokeColor: "#08B21F",
             strokeOpacity: 0.8,
             strokeWeight: 2,
             fillColor: "#08B21F",
             fillOpacity: 0.5
         });
+
         donut.setMap($scope.map.control.getGMap());
+
+        $scope.map.bounds = {
+            northeast: {
+                latitude: bounds.getNorthEast().lat(),
+                longitude: bounds.getNorthEast().lng()
+            },
+            southwest: {
+                latitude: bounds.getSouthWest().lat(),
+                longitude: bounds.getSouthWest().lng()
+            }
+        };
 
         var location = {
             id: rawLocation.id,
@@ -85,18 +104,6 @@ app.controller("mapController", function($scope, $http, optLocService) {
             }
         };
 
-        var getIconForPopulationSize = function(populationSize) {
-            var icon = "images/markers/"
-            if (populationSize > 100000) {
-                icon += "apartment-3"
-            } else if(populationSize > 10000) {
-                icon += "house"
-            } else {
-                icon += "condominium"
-            }
-            return icon + ".png"
-        }
-
         var nearbyLocations = _.map(optLocService.nearbyLocations, function(rawLocation) {
             return {
                 id: rawLocation.id,
@@ -104,7 +111,7 @@ app.controller("mapController", function($scope, $http, optLocService) {
                 longitude: rawLocation.center.longitude,
                 options: {
                     labelContent: rawLocation.name,
-                    icon: getIconForPopulationSize(rawLocation.population)
+                    icon: 'images/markers/house.png'
                 }
             };
         });
@@ -115,11 +122,18 @@ app.controller("mapController", function($scope, $http, optLocService) {
             latitude: location.latitude,
             longitude: location.longitude
         };
-
-        $scope.map.zoom = 11;
     });
 
-    function drawCircle(point, radius, dir) {
+    var bounds;
+    var drawDonut = function(center, rangeMax, rangeMin, threshold) {
+        bounds = new google.maps.LatLngBounds();
+        return [
+            drawCircle(new google.maps.LatLng(center.latitude, center.longitude), rangeMin - threshold, -1),
+            drawCircle(new google.maps.LatLng(center.latitude, center.longitude), rangeMax + threshold, 1)
+        ];
+    }
+
+    var drawCircle = function(point, radius, dir) {
         var d2r = Math.PI / 180;    // degrees to radians
         var r2d = 180 / Math.PI;    // radians to degrees
         var earthsradius = 6377830;    // 3963 is the radius of the earth in miles
@@ -139,11 +153,15 @@ app.controller("mapController", function($scope, $http, optLocService) {
             var start = points + 1;
             var end = 0
         }
+
+
         for (var i = start; (dir==1 ? i < end : i > end); i = i + dir) {
             var theta = Math.PI * (i / (points/2));
             ey = point.lng() + (rlng * Math.cos(theta)); // center a + radius x * cos(theta)
             ex = point.lat() + (rlat * Math.sin(theta)); // center b + radius y * sin(theta)
             extp.push(new google.maps.LatLng(ex, ey));
+
+            bounds.extend(extp[extp.length - 1]);
 
         }
         return extp;
@@ -178,7 +196,6 @@ app.controller("optionsController", function($scope, optLocService) {
     // leaving this in - might want to scale drawn circle in real
     // time but update markers only when slider stops.
     function rangeChange(event, ui) { }
-    function populationChange(event, ui) { }
 
     $scope.rangeConfig = {
         range: true,
@@ -186,20 +203,20 @@ app.controller("optionsController", function($scope, optLocService) {
         slide: rangeChange
     };
 
-    $scope.populationConfig = {
-        range: true,
-        change: populationChange,
-        slide: populationChange
-    };
-
     $scope.options = {
         range: [4000, 10000],
-        population: [5000, 100000]
+        population: 1
     };
 
+    var populationRange = [
+        [1000, 9999],
+        [10000, 49999],
+        [50000, undefined]
+    ];
+
     $scope.$watch("options.population", function() {
-        optLocService.options['population-min'] = $scope.options.population[0];
-        optLocService.options['population-max'] = $scope.options.population[1];
+        optLocService.options['population-min'] = populationRange[$scope.options.population][0];
+        optLocService.options['population-max'] = populationRange[$scope.options.population][1];
         optLocService.refresh();
     });
 

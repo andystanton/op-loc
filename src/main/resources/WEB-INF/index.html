@@ -56,7 +56,7 @@
 </div>
 
 <div ng-controller="mapController">
-    <google-map center="map.center" zoom="map.zoom" draggable="true" control="map.control">
+    <google-map center="map.center" zoom="map.zoom" draggable="true" control="map.control" bounds="map.bounds">
         <markers models="map.markers" coords="'self'" icon="'icon'" options="'options'" isLabel="true"></markers>
         <circle center="map.range.center"
                 radius="map.range.radius"
@@ -93,8 +93,8 @@
             </div>
             <div ui-slider="populationConfig"
                  min="0"
-                 max="500000"
-                 step="5000"
+                 max="2"
+                 step="1"
                  delay="300"
                  class="option-slider"
                  ng-model="options.population"></div>

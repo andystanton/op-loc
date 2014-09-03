@@ -51,6 +51,7 @@ import scala.concurrent.Await
         path("near" / """\d+""".r) { id =>
           get {
             parameters("range-min" ? 0, "range-max" ? 10000, "population-min" ? 1000, "population-max" ?).as(NearParams) { nearParams =>
+              println(nearParams)
               complete {
                 Await.result(postgresPlacesServiceActor ? NearRequest(id.toInt, nearParams), timeout.duration).asInstanceOf[Seq[Location]]
               }
