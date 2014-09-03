@@ -6,7 +6,7 @@ angular.module('optLocApp').factory('optLocService', function($rootScope, $http)
     optLocService.options = {};
 
     optLocService.refresh = function() {
-        if (typeof this.location.id !== 'undefined') {
+        if (!_.isUndefined(this.location.id)) {
             optLocService.selectLocation(this.location)
         }
     }
@@ -21,7 +21,6 @@ angular.module('optLocApp').factory('optLocService', function($rootScope, $http)
         }
 
         if (!_.isUndefined(optLocService.options['population-max'])) {
-            console.log("setting max pop to " + optLocService.options['population-max'])
             params['population-max'] = optLocService.options['population-max'];
         }
 

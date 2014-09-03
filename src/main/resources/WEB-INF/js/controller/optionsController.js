@@ -15,7 +15,7 @@ angular.module('optLocApp').controller("optionsController", function($scope, opt
     };
 
     var populationRange = [
-        [1000, 9999],
+        [0, 9999],
         [10000, 49999],
         [50000, undefined]
     ];
