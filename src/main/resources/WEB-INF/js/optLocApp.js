@@ -57,15 +57,15 @@ app.controller("mapController", function($scope, $http, optLocService) {
 
     $scope.$on('updateLocationEvent', function() {
         var rawLocation = optLocService.location;
-        var rawLatLong = rawLocation.latlong;
+        var center = rawLocation.center;
 
         if (typeof donut !== 'undefined') {
             donut.setMap(null);
         }
         donut = new google.maps.Polygon({
             paths: [
-                drawCircle(new google.maps.LatLng(rawLatLong.latitude, rawLatLong.longitude), optLocService.options['range-max'] + 500, 1),
-                drawCircle(new google.maps.LatLng(rawLatLong.latitude, rawLatLong.longitude), optLocService.options['range-min'] - 500, -1)
+                drawCircle(new google.maps.LatLng(center.latitude, center.longitude), optLocService.options['range-max'] + 500, 1),
+                drawCircle(new google.maps.LatLng(center.latitude, center.longitude), optLocService.options['range-min'] - 500, -1)
             ],
             strokeColor: "#08B21F",
             strokeOpacity: 0.8,
@@ -77,20 +77,34 @@ app.controller("mapController", function($scope, $http, optLocService) {
 
         var location = {
             id: rawLocation.id,
-            latitude: rawLocation.latlong.latitude,
-            longitude: rawLocation.latlong.longitude,
+            latitude: rawLocation.center.latitude,
+            longitude: rawLocation.center.longitude,
             options: {
-                labelContent: rawLocation.name
+                labelContent: rawLocation.name,
+                icon: 'images/markers/symbol_inter.png'
             }
         };
+
+        var getIconForPopulationSize = function(populationSize) {
+            var icon = "images/markers/"
+            if (populationSize > 100000) {
+                icon += "apartment-3"
+            } else if(populationSize > 10000) {
+                icon += "house"
+            } else {
+                icon += "condominium"
+            }
+            return icon + ".png"
+        }
 
         var nearbyLocations = _.map(optLocService.nearbyLocations, function(rawLocation) {
             return {
                 id: rawLocation.id,
-                latitude: rawLocation.latlong.latitude,
-                longitude: rawLocation.latlong.longitude,
+                latitude: rawLocation.center.latitude,
+                longitude: rawLocation.center.longitude,
                 options: {
-                    labelContent: rawLocation.name
+                    labelContent: rawLocation.name,
+                    icon: getIconForPopulationSize(rawLocation.population)
                 }
             };
         });

@@ -42,7 +42,8 @@ trait PostgresPlacesService {
           |  id,
           |  name,
           |  ST_X(geom) as latitude,
-          |  ST_Y(geom) as longitude
+          |  ST_Y(geom) as longitude,
+          |  population
           |FROM
           |  places_gb
           |WHERE
@@ -60,10 +61,11 @@ trait PostgresPlacesService {
     Location(
       resultSet.getInt("id"),
       resultSet.getString("name"),
-      LatLong(
+      Center(
         resultSet.getDouble("latitude"),
         resultSet.getDouble("longitude")
-      )
+      ),
+      resultSet.getLong("population")
     )
   }
 
@@ -74,7 +76,8 @@ trait PostgresPlacesService {
           |  id,
           |  name,
           |  ST_X(geom) as latitude,
-          |  ST_Y(geom) as longitude
+          |  ST_Y(geom) as longitude,
+          |  population
           |FROM
           |  places_gb
           |WHERE
@@ -91,10 +94,11 @@ trait PostgresPlacesService {
       Location(
         resultSet.getInt("id"),
         resultSet.getString("name"),
-        LatLong(
+        Center(
           resultSet.getDouble("latitude"),
           resultSet.getDouble("longitude")
-        )
+        ),
+        resultSet.getLong("population")
       )
     }.toList
   }
@@ -114,14 +118,15 @@ trait PostgresPlacesService {
           |  id,
           |  name,
           |  ST_X(geom) as latitude,
-          |  ST_Y(geom) as longitude
+          |  ST_Y(geom) as longitude,
+          |  population
           |FROM
           |  places_gb
           |WHERE
           |  id != '$id'
           |  AND feature_class='P'
-          |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.latlong.latitude}, ${location.latlong.longitude})) <= ${maxRange.get}
-          |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.latlong.latitude}, ${location.latlong.longitude})) >= ${minRange.get}
+          |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.center.latitude}, ${location.center.longitude})) <= ${maxRange.get}
+          |  AND ST_Distance_Sphere(geom, ST_MakePoint(${location.center.latitude}, ${location.center.longitude})) >= ${minRange.get}
           |  AND population BETWEEN ${minPopulation.get} AND ${maxPopulation.getOrElse(populationCeiling)}
           |ORDER BY
           |  name ASC
@@ -135,10 +140,11 @@ trait PostgresPlacesService {
         Location(
           resultSet.getInt("id"),
           resultSet.getString("name"),
-          LatLong(
+          Center(
             resultSet.getDouble("latitude"),
             resultSet.getDouble("longitude")
-          )
+          ),
+        resultSet.getLong("population")
         )
     }.toList
   }

@@ -53,7 +53,7 @@ class GooglePlacesServiceSpec
 
       location.id shouldBe -1
       location.name shouldBe "Newbury, West Berkshire, UK"
-      location.latlong shouldBe LatLong(51.401409, -1.3231139)
+      location.center shouldBe Center(51.401409, -1.3231139)
     }
   }
 
@@ -71,7 +71,7 @@ class GooglePlacesServiceSpec
 
       location.id shouldBe -1
       location.name shouldBe "Newbury, West Berkshire, UK"
-      location.latlong shouldBe LatLong(51.401409, -1.3231139)
+      location.center shouldBe Center(51.401409, -1.3231139)
     }
   }
 }
