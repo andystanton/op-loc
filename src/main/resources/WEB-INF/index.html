@@ -61,7 +61,7 @@
 </div>
 
 <div ng-controller="mapController">
-    <google-map center="map.center" zoom="map.zoom" draggable="true" control="map.control" bounds="map.bounds">
+    <google-map center="map.center" zoom="map.zoom" draggable="true" control="map.control" bounds="map.bounds" options="map.options">
         <markers models="map.markers" coords="'self'" icon="'icon'" options="'options'" isLabel="true"></markers>
         <circle center="map.range.center"
                 radius="map.range.radius"
@@ -77,11 +77,8 @@
         <div class="col-xs-8"><!--map-canvas will be postioned here--></div>
         <div class="col-xs-4" id="left" ng-controller="optionsController">
 
-            <h2>Settings</h2>
+            <h3>Settings</h3>
 
-            <hr>
-
-            <!-- item list -->
             <h4>Range</h4>
             <div ui-slider="rangeConfig"
                  min="0"

@@ -68,8 +68,10 @@ body{
 }
 
 .location-selector {
-    width: 396px;
+    width: 33%;
     margin-top: 8px;
+    margin-right: 4px;
+    float: right;
 }
 
 .gist {

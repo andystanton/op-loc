@@ -6,6 +6,10 @@ angular.module('optLocApp').controller("mapController", function($scope, $http, 
         control: {},
         bounds: {},
         range: { center: { latitude: 0, longitude: 0 } },
+        options: {
+            streetViewControl: false,
+            mapTypeControl: false
+        }
     };
 
     var donut = undefined;
@@ -23,7 +27,7 @@ angular.module('optLocApp').controller("mapController", function($scope, $http, 
 
     $scope.$on('updateLocationEvent', function() {
         var location = apiLocationToMapLocation.bind({ markerIcon: 'images/markers/symbol_inter.png' })(optLocService.location);
-        var nearbyLocations = _.map(optLocService.nearbyLocations, _.bind(apiLocationToMapLocation, { markerIcon: 'images/markers/house.png' }));
+        var nearbyLocations = _.map(optLocService.nearbyLocations, apiLocationToMapLocation.bind({ markerIcon: 'images/markers/house.png' }));
 
         var bounds = drawDonut(optLocService.location.center, optLocService.options['range-max'], optLocService.options['range-min']);
 
