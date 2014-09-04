@@ -1,16 +1,20 @@
 angular.module('optLocApp').controller("optionsController", function($scope, optLocService) {
-    // leaving this in - might want to scale drawn circle in real
-    // time but update markers only when slider stops.
-    function rangeChange(event, ui) { }
-
-    $scope.rangeConfig = {
-        range: true,
-        change: rangeChange,
-        slide: rangeChange
+    $scope.rangeTypes = {
+        NONE: undefined,
+        CIRCLE: 0,
+        DONUT: 1
     };
 
+    $scope.donutRangeConfig = {
+        range: true
+    };
+
+    $scope.circleRangeConfig = { };
+
     $scope.options = {
-        range: [4000, 10000],
+        rangeType: $scope.rangeTypes.DONUT,
+        donutRange: [4000, 10000],
+        circleRange: 10000,
         population: 1
     };
 
@@ -26,9 +30,24 @@ angular.module('optLocApp').controller("optionsController", function($scope, opt
         optLocService.refresh();
     });
 
-    $scope.$watch("options.range", function() {
-        optLocService.options['range-min'] = $scope.options.range[0];
-        optLocService.options['range-max'] = $scope.options.range[1];
+    $scope.$watch("options.donutRange", function() {
+        optLocService.options['range-min'] = $scope.options.donutRange[0];
+        optLocService.options['range-max'] = $scope.options.donutRange[1];
+        $scope.options.circleRange = $scope.options.donutRange[1];
         optLocService.refresh();
+    });
+
+    $scope.$watch("options.circleRange", function() {
+        optLocService.options['range-max'] = $scope.options.circleRange;
+        $scope.options.donutRange[1] = $scope.options.circleRange;
+        optLocService.refresh();
+    });
+
+    $scope.$watch("options.rangeType", function() {
+        if ($scope.options.rangeType == $scope.rangeTypes.CIRCLE) {
+            optLocService.options['range-min'] = 0;
+            $scope.options.donutRange[0] = 0;
+        }
+        console.log("range type changed to " + $scope.options.rangeType);
     });
 });

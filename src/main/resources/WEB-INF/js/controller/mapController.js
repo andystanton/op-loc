@@ -5,7 +5,13 @@ angular.module('optLocApp').controller("mapController", function($scope, $http, 
         markers: [],
         control: {},
         bounds: {},
-        range: { center: { latitude: 0, longitude: 0 } },
+        range: {
+            circle: {
+                center: { latitude: 0, longitude: 0 },
+                stroke: { color: "#08B21F", opacity: 0.8, weight: 2 },
+                fill: { color: "#08B21F", opacity: 0.5 }
+            }
+        },
         options: {
             streetViewControl: false,
             mapTypeControl: false
@@ -53,7 +59,7 @@ angular.module('optLocApp').controller("mapController", function($scope, $http, 
 
         donut = new google.maps.Polygon({
             paths: [
-                drawCircle(new google.maps.LatLng(center.latitude, center.longitude), rangeMin - threshold, -1, bounds),
+                drawCircle(new google.maps.LatLng(center.latitude, center.longitude), rangeMin - threshold < 0 ? 0 : rangeMin - threshold, -1, bounds),
                 drawCircle(new google.maps.LatLng(center.latitude, center.longitude), rangeMax + threshold, 1, bounds)
             ],
             strokeColor: "#08B21F",

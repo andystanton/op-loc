@@ -63,8 +63,8 @@
 <div ng-controller="mapController">
     <google-map center="map.center" zoom="map.zoom" draggable="true" control="map.control" bounds="map.bounds" options="map.options">
         <markers models="map.markers" coords="'self'" icon="'icon'" options="'options'" isLabel="true"></markers>
-        <circle center="map.range.center"
-                radius="map.range.radius"
+        <circle center="map.range.circle.center"
+                radius="map.range.circle.radius"
                 fill="map.range.fill"
                 stroke="map.range.stroke"
                 visible="map.range.visible">
@@ -80,13 +80,23 @@
             <h3>Settings</h3>
 
             <h4>Range</h4>
-            <div ui-slider="rangeConfig"
+            <input type="radio" name="rangeSelection" ng-model="options.rangeType" ng-value="rangeTypes.DONUT" />
+            <div ui-slider="donutRangeConfig"
                  min="0"
                  max="20000"
                  step="1000"
                  delay="300"
                  class="option-slider"
-                 ng-model="options.range"></div>
+                 ng-model="options.donutRange"></div>
+
+            <input type="radio" name="rangeSelection" ng-model="options.rangeType" ng-value="rangeTypes.CIRCLE" />
+            <div ui-slider="circleRangeConfig"
+                 min="0"
+                 max="20000"
+                 step="1000"
+                 delay="300"
+                 class="option-slider"
+                 ng-model="options.circleRange"></div>
 
             <h4>Population</h4>
             <div ui-slider="populationConfig"
