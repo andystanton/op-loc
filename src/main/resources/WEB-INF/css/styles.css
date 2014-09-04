@@ -54,7 +54,7 @@ body{
 }
 
 .angular-google-map-container {
-	width:66.6666%;
+	width:calc(100% - 275px);
     height:calc(100% - 0);
     position:absolute;
     left:0px;
@@ -78,5 +78,38 @@ body{
   font-size: 14px;
 }
 
-.option-slider .ui-slider-range { background: #69C5FF; }
-.option-slider .ui-slider-handle { border-color: #69C5FF; }
+.option-slider .ui-slider-range {
+    background: #69C5FF;
+}
+
+.option-slider .ui-slider-handle {
+    border-color: #69C5FF;
+}
+
+.sliderContainer {
+    width: 100%;
+    height: 25px;
+}
+
+.sliderContainer input[type=radio] {
+    float: left;
+    margin-right: 10px;
+}
+
+.sliderContainer .sliderDiv {
+    float: left;
+    width: 200px;
+    padding-top: 4px;
+}
+
+.sliderContainer div.sliderDiv:first-child {
+    padding-left: 25px;
+}
+
+.option-panel {
+    width: 275px;
+}
+
+.map-panel {
+    width: calc(100% - 275px);
+}

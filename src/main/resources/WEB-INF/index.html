@@ -74,39 +74,62 @@
 
 <div class="container-fluid" id="main">
     <div class="row">
-        <div class="col-xs-8"><!--map-canvas will be postioned here--></div>
-        <div class="col-xs-4" id="left" ng-controller="optionsController">
-
-            <h3>Settings</h3>
-
+        <div class="col-xs-8 map-panel"><!--map-canvas will be postioned here--></div>
+        <div class="col-xs-4 option-panel" id="left" ng-controller="optionsController">
+            <hr/>
             <h4>Range</h4>
-            <input type="radio" name="rangeSelection" ng-model="options.rangeType" ng-value="rangeTypes.DONUT" />
-            <div ui-slider="donutRangeConfig"
-                 min="0"
-                 max="20000"
-                 step="1000"
-                 delay="300"
-                 class="option-slider"
-                 ng-model="options.donutRange"></div>
 
-            <input type="radio" name="rangeSelection" ng-model="options.rangeType" ng-value="rangeTypes.CIRCLE" />
-            <div ui-slider="circleRangeConfig"
-                 min="0"
-                 max="20000"
-                 step="1000"
-                 delay="300"
-                 class="option-slider"
-                 ng-model="options.circleRange"></div>
+            <h5>Donut</h5>
+
+            <div class="sliderContainer">
+                <input type="radio"
+                       name="rangeSelection"
+                       ng-model="options.rangeType"
+                       ng-value="rangeTypes.DONUT" />
+                <div class="sliderDiv">
+                    <div ui-slider="donutRangeConfig"
+                         min="0"
+                         max="20000"
+                         step="1000"
+                         delay="300"
+                         class="option-slider"
+                         ng-model="options.donutRange">
+                    </div>
+                </div>
+            </div>
+
+            <h5>Circle</h5>
+
+            <div class="sliderContainer">
+                <input type="radio"
+                       name="rangeSelection"
+                       ng-model="options.rangeType"
+                       ng-value="rangeTypes.CIRCLE" />
+                <div class="sliderDiv">
+                    <div ui-slider="circleRangeConfig"
+                         min="0"
+                         max="20000"
+                         step="1000"
+                         delay="300"
+                         class="option-slider sliderDiv"
+                         ng-model="options.circleRange">
+                    </div>
+                </div>
+            </div>
 
             <h4>Population</h4>
-            <div ui-slider="populationConfig"
-                 min="0"
-                 max="2"
-                 step="1"
-                 delay="300"
-                 class="option-slider"
-                 ng-model="options.population"></div>
-
+            <div class="sliderContainer">
+                <div class="sliderDiv">
+                    <div ui-slider="populationConfig"
+                         min="0"
+                         max="2"
+                         step="1"
+                         delay="300"
+                         class="option-slider"
+                         ng-model="options.population">
+                     </div>
+                </div>
+            </div>
             <hr>
         </div>
     </div>
