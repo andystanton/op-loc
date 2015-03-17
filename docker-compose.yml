@@ -1,0 +1,10 @@
+app:
+  build: .
+  ports:
+   - "43574:8080"
+  links:
+   - db
+db:
+  build: database
+  ports:
+    - "127.0.0.1:5432:5432"

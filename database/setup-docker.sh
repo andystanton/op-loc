@@ -1,5 +1,11 @@
 #!/bin/bash
 
+chown postgres:postgres /etc/ssl/private/ssl-cert-snakeoil.key
+
+
+
+service postgresql start
+
 pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd -P`
 popd > /dev/null
