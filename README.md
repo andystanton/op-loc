@@ -18,7 +18,9 @@ sbt assembly
 docker-compose up
 ```
 
-The application will be available on http://<DOCKER_HOST_IP>:43574. <DOCKER_HOST_IP> is usually localhost on Linux and the default value is something like 192.168.59.103 when using boot2docker.
+The application will be available on ```http://<DOCKER_HOST_IP>:43574```.
+
+```<DOCKER_HOST_IP>``` is usually localhost on Linux and the default value is something like 192.168.59.103 when using boot2docker.
 
 ## Features
 
