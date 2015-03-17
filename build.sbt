@@ -4,7 +4,7 @@ organization          := "otos"
 
 version               := "0.1.0-SNAPSHOT"
 
-scalaVersion          := "2.11.1"
+scalaVersion          := "2.11.6"
 
 scalacOptions         := Seq("-deprecation", "-feature", "-encoding", "utf8")
 

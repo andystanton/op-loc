@@ -8,3 +8,4 @@
 /database/data
 /src/main/resources/WEB-INF/bower_components
 pidfile
+.idea
