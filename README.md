@@ -1,4 +1,4 @@
-# Optimum Locum [![Build Status](http://drone.cyniq.com/github.com/andystanton/opt-loc/status.svg?branch=master)](http://drone.cyniq.com/github.com/andystanton/opt-loc)
+# Optimum Locum [![Build Status](http://drone.cyniq.com/api/badge/github.com/andystanton/opt-loc/status.svg?branch=master)](http://drone.cyniq.com/github.com/andystanton/opt-loc)
 
 API for evaluating the suitability of candidate locations based on configurable variables.
 
