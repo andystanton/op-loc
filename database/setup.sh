@@ -27,22 +27,21 @@ echo -e "Populating Optimum Locum database..."
 echo -e "=========================================================================="
 
 echo -e "Downloading http://download.geonames.org/export/dump/GB.zip to data/GB.zip"
-
 mkdir -p "$SCRIPTPATH/data/GB"
-
 curl -o "$SCRIPTPATH/data/GB.zip" http://download.geonames.org/export/dump/GB.zip --silent
 
 echo -e "Extracting data/GB.zip to data/GB"
-
 unzip -o -q "$SCRIPTPATH/data/GB.zip" -d "$SCRIPTPATH/data/GB"
 
 echo -e "Importing raw GB places data"
-
 psql -d 'opt-loc' -c "copy raw_places_gb FROM '""$SCRIPTPATH""/data/GB/GB.txt' NULL AS ''"
 
 echo -e "Importing relevant GB places data"
-
 psql < "$SCRIPTPATH/db-copy-relevant.sql" -d 'opt-loc'
+
+echo -e "Cleaning up GB places data"
+rm $SCRIPTPATH/data/GB.zip
+rm $SCRIPTPATH/data/GB/GB.txt
 
 echo -e "=========================================================================="
 echo -e "Database created, prepared initialised and populated"
